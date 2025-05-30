@@ -1,4 +1,3 @@
-"""
 # 🧠 OpenMuscle-FlexGrid
 
 ![Status: Prototype](https://img.shields.io/badge/status-prototype-orange)
@@ -64,4 +63,3 @@ We welcome improvements to sensor design, firmware, or real-world testing. Pleas
 
 ---
 **Open Muscle** is an open-source prosthetic sensor initiative designed for accessibility, innovation, and community collaboration.
-"""
