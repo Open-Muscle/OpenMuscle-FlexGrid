@@ -13320,7 +13320,6 @@
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "50a92642-b813-4934-93fe-abe22c2a4924")
 		(property "Reference" "Q2"
 			(at 26.67 92.71 90)
@@ -13330,8 +13329,8 @@
 				)
 			)
 		)
-		(property "Value" "VP0610T"
-			(at 26.67 95.25 90)
+		(property "Value" "VP0610T or BSS84"
+			(at 30.48 95.25 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -13560,8 +13559,8 @@
 				)
 			)
 		)
-		(property "Value" "LTC4054ES5-4.2"
-			(at 129.54 99.06 0)
+		(property "Value" "LTC4054ES5-4.2 or STC4054GR"
+			(at 125.984 99.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
