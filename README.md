@@ -1,6 +1,6 @@
 # 🧠 OpenMuscle-FlexGrid
 
-![Status: Prototype](https://img.shields.io/badge/status-prototype-orange)
+![Latest: V3 (ordered, untested)](https://img.shields.io/badge/latest-V3%20%E2%80%94%20ordered%2C%20untested-yellow)
 ![License: CERN-OHL-S-2.0](https://img.shields.io/badge/license-CERN--OHL--S--2.0-blue)
 ![MCU: ESP32-S3](https://img.shields.io/badge/MCU-ESP32--S3-blue)
 
@@ -9,6 +9,21 @@ OpenMuscle FlexGrid is a modular 60-sensor pressure-sensing platform designed fo
 This device is part of the [OpenMuscle](https://github.com/Open-Muscle) ecosystem and represents a leap forward from the original 12-sensor OM12 prototype by introducing high-density, flex-rigid PCBs and better sensor modularity.
 
 ### 📌 For documentation, firmware, and assembly guidance, visit the [OpenMuscle Hub](https://github.com/Open-Muscle/OpenMuscle-Hub).
+
+---
+
+## 🚀 Latest revision
+
+**V3 — sent to fab 2026-04-25, awaiting bring-up.** First revision to use a 20-pin ZIF FFC connector for the flex-to-rigid interconnect (Wurth 687120183722). Boards have not yet been received or tested.
+
+→ See [`KiCad/OM-FlexGrid V3/`](KiCad/OM-FlexGrid%20V3/) and the [V3 README](KiCad/OM-FlexGrid%20V3/README.md) for files, fabrication parameters, and design notes.
+
+| Revision | Status | Notes |
+|----------|--------|-------|
+| **V3** | 🟡 Ordered, untested | 20-pin FFC interconnect, integrated stiffened FFC tail |
+| V2 | 🟢 Tested | FFC connector exploration, fabric harness testing |
+| V1 | 🟢 Tested | First production revision |
+| V0 | 🟢 Tested | Original prototype |
 
 ---
 
@@ -28,26 +43,27 @@ Design files are organized by board type and version:
 
 ### 🔌 KiCad Schematics & PCB Layout
 
-📂 [`KiCad/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/KiCad)
+📂 [`KiCad/`](KiCad/) — all design files, organized by revision.
 
-| Subfolder | Description |
-|-----------|-------------|
-| [`KiCad/OM-FlexGrid V0/OM-60-Flex/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/KiCad/OM-FlexGrid%20V0/OM-60-Flex) | Flexible PCB sensor matrix (wraps around forearm) |
-| [`KiCad/OM-FlexGrid V0/OM-60-Rigid-PCB/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/KiCad/OM-FlexGrid%20V0/OM-60-Rigid-PCB) | Rigid microcontroller and connector breakout PCB |
-| [`KiCad/OM-FlexGrid V0/OM-60-Flex/V1 Gerber/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/KiCad/OM-FlexGrid%20V0/OM-60-Flex/V1%20Gerber) | Fabrication files for the flexible PCB |
-| [`KiCad/OM-FlexGrid V0/OM-60-Rigid-PCB/OM-60-Rigid-Gerber/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/KiCad/OM-FlexGrid%20V0/OM-60-Rigid-PCB/OM-60-Rigid-Gerber) | Fabrication files for the rigid PCB |
+| Revision | Path | Description |
+|----------|------|-------------|
+| **V3** (latest) | [`KiCad/OM-FlexGrid V3/`](KiCad/OM-FlexGrid%20V3/) | Current design — 20-pin ZIF FFC interconnect. See [V3 README](KiCad/OM-FlexGrid%20V3/README.md). |
+| V2 | [`KiCad/OM-FlexGrid V2/`](KiCad/OM-FlexGrid%20V2/) | Tested. FFC exploration + fabric harness. See [V2 README](KiCad/OM-FlexGrid%20V2/README.md). |
+| V1 | [`KiCad/OM-FlexGrid V1/`](KiCad/OM-FlexGrid%20V1/) | First production revision. |
+| V0 | [`KiCad/OM-FlexGrid V0/`](KiCad/OM-FlexGrid%20V0/) | Original prototype. |
 
-> Current version: **v0 (prototype)**  
-> Next planned version: **v1.0 – improved sensor headers and trace layout**
+Each revision folder contains both the flex (`OM-FlexGrid-Flex/`) and rigid (`OM-FlexGrid-Rigid-PCB/`) board projects, plus their gerber bundles.
 
 ---
 
 ### 📦 Bill of Materials
 
-📂 [`BOM/`](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/tree/main/BOM)
+The current BOM lives next to its KiCad project for each revision:
 
-Each subfolder contains BOM spreadsheets for its respective board.  
-Format: CSV or XLSX, with part numbers and source links.
+- **V3 Rigid:** [`KiCad/OM-FlexGrid V3/OM-FlexGrid-Rigid-PCB/OM-FlexGrid-Rigid-PCB.csv`](KiCad/OM-FlexGrid%20V3/OM-FlexGrid-Rigid-PCB/OM-FlexGrid-Rigid-PCB.csv) (KiCad export)
+- **V3 Flex:** no electronic-component BOM — the flex tail integrates the FFC connector pads directly; the only off-board parts are the Velostat sheet and the mating Wurth 687120183722 connector populated on the rigid board.
+
+Older revision BOMs are kept under [`BOM/`](BOM/) for history.
 
 ---
 

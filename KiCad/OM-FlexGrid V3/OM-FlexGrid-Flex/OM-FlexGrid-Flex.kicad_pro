@@ -500,7 +500,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "V2 Gerber/",
+      "plot": "../V3 Flex PCB Gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",

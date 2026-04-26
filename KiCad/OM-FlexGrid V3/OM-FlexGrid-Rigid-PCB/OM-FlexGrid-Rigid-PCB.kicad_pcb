@@ -137,7 +137,7 @@
 			(mirror no)
 			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "OM-FlexGrid-Rigid-PCB-Gerber-V2-1/")
+			(outputdirectory "V3 Rigid PCB Gerber/")
 		)
 	)
 	(net 0 "")
