@@ -4,6 +4,11 @@
 	(generator_version "9.0")
 	(uuid "ea195db3-1512-4914-b2e6-ecba2a4e38e5")
 	(paper "A4")
+	(title_block
+		(title "Open Muscle FlexGrid Rigid PCB V3")
+		(rev "V3")
+		(company "Open Muscle")
+	)
 	(lib_symbols
 		(symbol "2025-04-05_16-16-06:ESP32-S3-WROOM-1-N16R8"
 			(pin_names
