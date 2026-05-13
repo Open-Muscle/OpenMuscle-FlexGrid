@@ -1,6 +1,6 @@
 # 🧠 OpenMuscle-FlexGrid
 
-![Latest: V3 (ordered, untested)](https://img.shields.io/badge/latest-V3%20%E2%80%94%20ordered%2C%20untested-yellow)
+![Latest: V3 (validated)](https://img.shields.io/badge/latest-V3%20%E2%80%94%20validated-green)
 ![License: CERN-OHL-S-2.0](https://img.shields.io/badge/license-CERN--OHL--S--2.0-blue)
 ![MCU: ESP32-S3](https://img.shields.io/badge/MCU-ESP32--S3-blue)
 
@@ -14,13 +14,13 @@ This device is part of the [OpenMuscle](https://github.com/Open-Muscle) ecosyste
 
 ## 🚀 Latest revision
 
-**V3 — sent to fab 2026-04-25, awaiting bring-up.** First revision to use a 20-pin ZIF FFC connector for the flex-to-rigid interconnect (Wurth 687120183722). Boards have not yet been received or tested.
+**V3 — validated 2026-05-13.** First revision to use a 20-pin ZIF FFC connector for the flex-to-rigid interconnect (Wurth 687120183722). Two boards populated and tested. Sensor matrix scans at ~140 Hz with a clean baseline and no row-bleed crosstalk. **V3 solves the long-standing flex↔rigid signal-quality problem** that constrained V0 through V2.
 
-→ See [`KiCad/OM-FlexGrid V3/`](KiCad/OM-FlexGrid%20V3/) and the [V3 README](KiCad/OM-FlexGrid%20V3/README.md) for files, fabrication parameters, and design notes.
+→ See [`KiCad/OM-FlexGrid V3/`](KiCad/OM-FlexGrid%20V3/) for hardware files, the [V3 hardware README](KiCad/OM-FlexGrid%20V3/README.md) for build notes, and the [FlexGridV3-Firmware repo](https://github.com/Open-Muscle/FlexGridV3-Firmware) for the MicroPython firmware that runs on it.
 
 | Revision | Status | Notes |
 |----------|--------|-------|
-| **V3** | 🟡 Ordered, untested | 20-pin FFC interconnect, integrated stiffened FFC tail |
+| **V3** | 🟢 Validated | 20-pin FFC interconnect, integrated stiffened FFC tail, ~140 Hz raw scan |
 | V2 | 🟢 Tested | FFC connector exploration, fabric harness testing |
 | V1 | 🟢 Tested | First production revision |
 | V0 | 🟢 Tested | Original prototype |
