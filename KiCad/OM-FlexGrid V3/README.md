@@ -1,6 +1,8 @@
 # OM-FlexGrid V3
 
-> **Status: ORDERED — bring-up pending (as of 2026-04-25).** V3 gerbers have been sent for fabrication. The boards have not been received, populated, or electrically tested. Treat all V3 files as a *design candidate*, not a validated release. Expect this banner to be updated once the first units come in.
+> **Status: VALIDATED (as of 2026-05-13).** Two boards populated and tested end-to-end. The Wurth 687120183722 FFC interconnect mates cleanly with the integrated stiffened flex tail (0.20 mm FR4 stiffener, bottom-side, total ~0.31 mm — on Wurth's 0.30 ±0.05 mm spec). Sensor matrix scans at ~140 Hz with no row-sneak crosstalk and a near-zero idle baseline. UDP telemetry over Wi-Fi confirmed reaching the desktop visualizer. **V3 is the first revision where the flex↔rigid interconnect is no longer the project's main signal-quality problem** — the original goal of the revision is met.
+>
+> Open items: characterizing one occasionally-glitchy sensor on board #1 (likely a Velostat pad or FFC contact issue, not firmware); ICM-42688-P IMU driver still TODO.
 
 Third major revision of the Open Muscle FlexGrid wearable sensor platform. V3 standardizes the flex-to-rigid interconnect on a 20-pin 0.5 mm-pitch ZIF FFC connector, eliminating the hand-soldered pin-header link used through V2.
 
