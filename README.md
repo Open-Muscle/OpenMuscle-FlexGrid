@@ -14,7 +14,7 @@ This device is part of the [OpenMuscle](https://github.com/Open-Muscle) ecosyste
 
 ## 🚀 Latest revision
 
-**V3 — validated 2026-05-13.** First revision to use a 20-pin ZIF FFC connector for the flex-to-rigid interconnect (Wurth 687120183722). Two boards populated and tested. Sensor matrix scans at ~140 Hz with a clean baseline and no row-bleed crosstalk. **V3 solves the long-standing flex↔rigid signal-quality problem** that constrained V0 through V2.
+**V3 — production-quality matrix as of 2026-05-13.** First revision to use a 20-pin ZIF FFC connector for the flex-to-rigid interconnect (Wurth 687120183722). Two boards populated and tested end-to-end. Sensor matrix delivers **clean single-cell press detection across all 60 sensors** with ~22% carryover decaying to noise floor within 3 columns. **V3 is the first FlexGrid generation usable as a real ML training data source.** Firmware: [FlexGridV3-Firmware v0.1.7](https://github.com/Open-Muscle/FlexGridV3-Firmware).
 
 → See [`KiCad/OM-FlexGrid V3/`](KiCad/OM-FlexGrid%20V3/) for hardware files, the [V3 hardware README](KiCad/OM-FlexGrid%20V3/README.md) for build notes, and the [FlexGridV3-Firmware repo](https://github.com/Open-Muscle/FlexGridV3-Firmware) for the MicroPython firmware that runs on it.
 
