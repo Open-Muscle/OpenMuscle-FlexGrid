@@ -1,8 +1,10 @@
 # OM-FlexGrid V3
 
-> **Status: VALIDATED (as of 2026-05-13).** Two boards populated and tested end-to-end. The Wurth 687120183722 FFC interconnect mates cleanly with the integrated stiffened flex tail (0.20 mm FR4 stiffener, bottom-side, total ~0.31 mm — on Wurth's 0.30 ±0.05 mm spec). Sensor matrix scans at ~140 Hz with no row-sneak crosstalk and a near-zero idle baseline. UDP telemetry over Wi-Fi confirmed reaching the desktop visualizer. **V3 is the first revision where the flex↔rigid interconnect is no longer the project's main signal-quality problem** — the original goal of the revision is met.
+> **Status: VALIDATED (as of 2026-05-13).** Two boards populated and brought up end-to-end. The Wurth 687120183722 FFC interconnect mates cleanly with the integrated stiffened flex tail (0.20 mm FR4 stiffener, bottom-side, total ~0.31 mm — on Wurth's 0.30 ±0.05 mm spec). Sensor matrix scans at ~75 Hz with no row-sneak crosstalk, no scan-direction bleed, and isolated single-cell response under a single-column Velostat strip press test. UDP telemetry over Wi-Fi confirmed reaching the desktop visualizer (`openmuscle web` and `openmuscle receive`). **V3 is the first revision where the flex↔rigid interconnect is no longer the project's main signal-quality problem** — the original goal of the revision is met.
 >
-> Open items: characterizing one occasionally-glitchy sensor on board #1 (likely a Velostat pad or FFC contact issue, not firmware); ICM-42688-P IMU driver still TODO.
+> Firmware that makes this work lives at [Open-Muscle/FlexGridV3-Firmware](https://github.com/Open-Muscle/FlexGridV3-Firmware) (v0.1.6, MIT). Five non-obvious scan techniques were needed; they're documented in that repo's `README` under "Sensor scan techniques".
+>
+> Open items: characterizing one occasionally-glitchy sensor on board #1; diagnosing IO2 (= ROW_1) GPIO-output anomaly on board #1 (suspect R13 or its trace); ICM-42688-P IMU driver still TODO.
 
 Third major revision of the Open Muscle FlexGrid wearable sensor platform. V3 standardizes the flex-to-rigid interconnect on a 20-pin 0.5 mm-pitch ZIF FFC connector, eliminating the hand-soldered pin-header link used through V2.
 
@@ -129,6 +131,31 @@ The stiffener is a rectangular FR4 backer bonded to the bottom side of the flex 
 CD74HC4067 walks 15 columns to 3.3 V one at a time; four row lines with 10 kΩ pulldowns are sampled on ESP32 ADC1. 60 readings per scan frame.
 
 ---
+
+## Bring-up findings (2026-05-13)
+
+Five firmware-side issues had to be solved before the matrix produced clean data. They're all documented in detail in the [firmware repo's README](https://github.com/Open-Muscle/FlexGridV3-Firmware#sensor-scan-techniques), but the hardware-relevant takeaways are:
+
+| Issue | Root cause | Where the fix lives |
+|---|---|---|
+| Row sneak path — press lights up whole row | CD74HC4067 unselected channels are high-Z; press on one cell forms a sneak path through other pressed cells via the floating columns | Firmware: drive non-target rows to OUTPUT LOW while reading the target row |
+| Mux address glitches kick energy into pressed column | MicroPython `Pin.value()` is ~1 µs and S0–S3 update non-atomically; HC4067 settles in 80 ns and routes intermediate addresses | Firmware: raise mux `E` (disable) before changing address, lower it after |
+| Scan-direction bleed (right of pressed cell) | ADC sample-and-hold cap holds the previous cell's voltage; first read after `Pin.init()` mode change returns a stale sample | Firmware: 30 µs row discharge + discard-first-read |
+| Slow Wi-Fi join → permanent UDP silence | `connect()` blocked for 20 s, then `RuntimeError` skipped socket creation | Firmware: create UDP socket in `__init__` |
+| `openmuscle receive` heatmap silently dropped V3 packets | Viz hardcoded 16-column matrix; V3 sends 15 | Host: shape auto-detection in [OpenMuscle-Software](https://github.com/Open-Muscle/OpenMuscle-Software) |
+
+**One open hardware finding** worth chasing on the next revision or as a follow-up on board #1: **GPIO 2 (ROW_1) does not drive HIGH cleanly.** When the firmware sets the pin to `Pin.OUT(value=1)`, the ADC reads back ~55 (≈ 0 V) instead of the expected ~3100. Other rows on the same board behave normally. Suspect a bad solder joint on R13 (the 10 kΩ pulldown for ROW_1) or a local trace short. Doesn't break the scan (the pin still works as an ADC input and reaches GND well enough for the ground-other-rows trick), but worth probing with a multimeter.
+
+## Design suggestions for V4
+
+Captured here so they don't get lost. None of these are *needed* — V3 works — but they'd make the next revision easier to bring up and more robust:
+
+- **Per-row series resistor (~100 Ω–1 kΩ)** between each ROW_N net and the ESP32 ADC pin. Limits short-circuit current if a row is accidentally driven high while a column is also high, and dampens RC oscillations on long traces. Cheap insurance.
+- **Pick row GPIOs from outside ADC1 if possible**, OR accept the ADC-sharing quirks documented above. ESP32-S3 GPIO1–10 are ADC1-shared and have the SAH-stale-sample behavior. If you only need 4 row ADCs, IO11–IO20 (ADC2) work too, with the caveat that ADC2 conflicts with Wi-Fi RF — so only sample when Wi-Fi is idle, or stay on ADC1 and use the discard-first-read trick from V3 firmware.
+- **Move the BOOT button further from the FFC connector** so accidental flex pressure or a stray tool tip can't depress it during assembly. The "stuck in download mode at boot" failure mode bit us on V3 bring-up.
+- **Consider per-cell Velostat patches** instead of one continuous sheet, or a thin spacer mask with cell-sized holes, to reduce mechanical bleed between adjacent cells. The firmware fixes only kill electrical bleed; Velostat compression spreads laterally as a material property.
+- **Label the FFC pin 1 marker on the silkscreen for both flex and rigid.** Both V3 footprints turned out to be internally consistent, but the schematic-only review process couldn't easily confirm that — silkscreen markers make the inspection trivial.
+- **Add test pads** on the four row nets (ROW_0–ROW_3), the four mux address lines (S0–S3), and the mux `E`. Makes scope/multimeter probing during bring-up much easier than soldering wires to 0603s.
 
 ## V3 release files (sent to fab 2026-04-25)
 
