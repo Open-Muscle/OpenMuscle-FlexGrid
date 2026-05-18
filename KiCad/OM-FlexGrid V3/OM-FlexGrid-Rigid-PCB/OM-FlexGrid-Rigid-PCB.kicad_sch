@@ -11061,7 +11061,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "0.1 uF"
+		(property "Value" "100 nF"
 			(at 259.08 154.9399 0)
 			(effects
 				(font
@@ -12197,7 +12197,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1N4007"
+		(property "Value" "1N5819"
 			(at 34.29 162.56 90)
 			(effects
 				(font
@@ -13102,7 +13102,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "ICM-42688-P"
+		(property "Value" "ICM-42688-P or ICM-42670-L"
 			(at 239.522 130.048 0)
 			(effects
 				(font
@@ -18512,7 +18512,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "100 uF"
+		(property "Value" "22 uF"
 			(at 47.371 162.433 0)
 			(effects
 				(font
