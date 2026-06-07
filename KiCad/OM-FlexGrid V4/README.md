@@ -92,6 +92,7 @@ Issues we hit during V3 design / V4 LCSC selection that are now fixed in V4:
 - **1N5819 and 1N4007** previously used the `D_SOD-123F` footprint. LCSC primarily stocks the `1N5819W` and `1N4007W` variants in **SOD-123** (no `F` suffix). V4 swaps both diode footprints to plain SOD-123 to match what is actually available at the manufacturer.
 - **Resistors** that the JLCPCB plugin's "auto-select alike" feature had silently downgraded to 0402 are all forced back to **0603**. This matches the LCSC Basic-tier inventory the design draws from and keeps hand rework feasible.
 - **C9 (100 uF)** previously sat on an 0603 footprint that cannot physically host a 100 uF cap. Footprint upsized to match the chosen part.
+- **MAX1 (MAX16054 soft-power controller)** footprint changed from SOT-23-6 to **TSOT-23-6** to match the LCSC part C79401 (MAX16054AZT+T ships in TSOT-23-6). The two packages share the same pad pitch and outline (the TSOT variant is just thinner), so a SOT-23-6 footprint would have accepted the part, but matching the footprint to the actual package is cleaner for downstream KiCad consumers. The schematic value also got cleaned up from `~` to `MAX16054` so the BOM and silkscreen identify it correctly.
 
 ---
 
@@ -107,19 +108,19 @@ Treat haptic as an **optional / experimental feature** for now. If V4 bring-up n
 
 The firmware should default the haptic GPIO to "off" and only enable it behind an explicit opt-in setting, so users running a standard recording or inference session do not get unexpected vibration.
 
-### ADC matrix-row capacitors (C12, C13, C14, C15)
+### ADC matrix-row capacitors (C12, C13, C14, C15) — RESOLVED
 
-V4 currently carries the same **2.2 uF** caps on the 4 ADC sense lines that V3 originally shipped with, and the JLCPCB plugin has them set to populate (BOM and POS toggled ON).
+**Final decision: 100 pF (LCSC C14858, 0603, Basic tier).** Option 3 from the original analysis below.
 
-**This is the same configuration that on V3 caused the column-to-column bleed problem.** Each 2.2 uF cap forms a ~22 ms RC time constant with its associated 10 kΩ pulldown on the row, meaning the ADC cannot settle between mux column-switches at the V3 scan rate. The fix that brought V3 to "production-quality matrix" status was to **physically remove C12 through C15** from both populated boards. After removal the signal range improved roughly 9x and per-column carryover dropped to about 22% (acceptable, decaying to noise floor within 3 columns). V3's bring-up README documents the original symptom and the removal procedure.
+The 100 pF value drops the RC time constant with each row's 10 kΩ pulldown from ~22 ms (V3 with 2.2 uF) to ~1 microsecond, well below the per-column ADC dwell time. Resolves the column-to-column bleed that V3 had to fix by removing the caps entirely, while preserving the high-frequency noise filtering at the ADC input. **No mid-bring-up rework needed on V4 if the math holds.**
 
-V4 needs a decision here before fab. Three viable options:
+For posterity, the original options considered were:
 
-1. **Leave the 2.2 uF parts in the JLC BOM**, then physically remove them during V4 bring-up the same way V3 did. Wastes the per-board part cost (small, the caps are pennies on Basic tier) but minimizes the fab-time decision. Lowest cognitive risk.
-2. **Toggle C12 through C15 to BOM-OFF and POS-OFF** in the JLCPCB plugin so JLC does not populate them at all. Hand-solder only if matrix bench-testing on a bare board shows they are needed for noise filtering. Cleanest path; matches the empirical outcome from V3.
-3. **Change the V4 value to ~100 pF** (same 0603 footprint, new LCSC part number). The new RC drops from 22 ms to under 2 microseconds, well below the per-column dwell time, so column-to-column bleed disappears. Keeps the high-frequency noise filtering benefit. Requires re-tagging the parts in the plugin and re-generating fab files.
+1. Leave the 2.2 uF parts in the JLC BOM, then physically remove them during V4 bring-up the same way V3 did. Wastes the per-board part cost; lowest cognitive risk.
+2. Toggle C12 through C15 to BOM-OFF and POS-OFF in the JLCPCB plugin so JLC does not populate them. Hand-solder only if matrix bench-testing on a bare board shows they are needed for noise filtering. Matches V3 empirical outcome.
+3. **Change the V4 value to 100 pF** (same 0603 footprint, new LCSC). Most engineering-correct; adds a small amount of rework. **Selected.**
 
-Option 2 is the safest given the V3 empirical evidence. Option 3 is the most engineering-correct but adds rework. Option 1 wastes a few pennies per board but ships fastest.
+V3's bring-up README documents the original symptom (22 ms RC bleed at 2.2 uF, ~9x signal improvement after physical removal).
 
 ---
 
@@ -195,14 +196,14 @@ The authoritative per-designator list lives in the schematic and the JLCPCB plug
 - [x] **TPS7A03 LDO chosen.** C2873330 (Texas Instruments TPS7A0333DBVR, 3.3 V output, SOT-23-5, ~3000 stock at LCSC).
 - [x] **STC4054GR charger chosen.** C262930 (ST Microelectronics, pin-compatible with the original LTC4054).
 - [x] **CHRG LED swap.** Replaced the original Extended-tier C72043 (stock = 1) with C2297 (Basic tier, > 3M stock).
-- [x] **Footprint cleanup applied:** 1N5819 and 1N4007 standardized on SOD-123, all resistors forced to 0603, C9 footprint upsized to fit the chosen 100 uF cap.
+- [x] **Footprint cleanup applied:** 1N5819 and 1N4007 standardized on SOD-123, all resistors forced to 0603, C9 footprint upsized to fit the chosen 100 uF cap, MAX1 (MAX16054) footprint moved to TSOT-23-6.
+- [x] **ADC matrix-row caps C12-C15 changed to 100 pF.** Resolves the V3 column-bleed risk in silicon; no mid-bring-up rework needed. New LCSC: C14858 (Basic tier).
 
 ### Still open
 
 - [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`)
 - [ ] **V4 Flex PCB**: bump the FFC tail width from 11.1 mm to **10.5 mm** per the Wurth 687120183722 datasheet. This fix has not yet landed in the V4 Flex folder; do it before ordering the matching flex.
-- [ ] **Decide the fate of C12, C13, C14, C15** (the 2.2 uF ADC matrix-row caps). Default is populate-then-remove like V3; recommended cleaner path is BOM-OFF / POS-OFF in the plugin before generating final fab files. See [Known carry-forward concerns from V3](#known-carry-forward-concerns-from-v3) for the full reasoning.
-- [ ] **Flag haptic as experimental in firmware.** The haptic driver hardware (Q?, IRLML2060 on the haptic GPIO) ships unvalidated. Firmware should default the haptic GPIO low and only drive it behind an explicit opt-in.
+- [ ] **Flag haptic as experimental in firmware.** The haptic driver hardware (IRLML2060 on the haptic GPIO) ships unvalidated. Firmware should default the haptic GPIO low and only drive it behind an explicit opt-in.
 - [ ] **Final BOM scan**: open `jlcpcb/production_files/BOM-OM-FlexGrid-Rigid-PCB.csv` and confirm no surprise Extended-tier parts with thin stock slipped in. The plugin's auto-suggestions occasionally rotate inventory between sessions.
 - [ ] **Order parts for hand assembly** (need physical inventory before boards arrive):
     - microSD socket: LCSC C428492 or Mouser equivalent (10 + spares)
