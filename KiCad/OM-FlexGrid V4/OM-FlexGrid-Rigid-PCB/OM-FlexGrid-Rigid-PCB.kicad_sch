@@ -2631,8 +2631,8 @@
 			(on_board yes)
 			(in_pos_files yes)
 			(duplicate_pin_numbers_are_jumpers no)
-			(property "Reference" "J"
-				(at -16.51 15.24 0)
+			(property "Reference" "J9"
+				(at 0.635 19.05 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
@@ -2642,17 +2642,16 @@
 				)
 			)
 			(property "Value" "Micro_SD_Card"
-				(at 16.51 15.24 0)
+				(at 0.635 16.51 0)
 				(show_name no)
 				(do_not_autoplace no)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
-					(justify right)
 				)
 			)
-			(property "Footprint" ""
+			(property "Footprint" "footprints:CONN_503398-1892_MOL"
 				(at 29.21 7.62 0)
 				(show_name no)
 				(do_not_autoplace no)
@@ -13786,7 +13785,6 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
 		(uuid "1723cb64-d89d-430f-902e-88754849a241")
 		(property "Reference" "MAX1"
 			(at 125.3841 147.32 0)
@@ -13799,8 +13797,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" ""
-			(at 123.19 152.4 0)
+		(property "Value" "MAX16054"
+			(at 112.776 146.304 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -13809,7 +13807,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+		(property "Footprint" "Package_TO_SOT_SMD:TSOT-23-6"
 			(at 123.19 152.4 0)
 			(hide yes)
 			(show_name no)
@@ -15082,7 +15080,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SOD-123F"
+		(property "Footprint" "Diode_SMD:D_SOD-123"
 			(at 27.305 161.29 0)
 			(hide yes)
 			(show_name no)
@@ -15127,6 +15125,17 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 31.75 161.29 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C22440662"
+			(at 34.29 160.02 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -15293,6 +15302,17 @@
 				)
 			)
 		)
+		(property "LCSC" "C2827305"
+			(at 180.34 20.32 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
 		(pin "6"
 			(uuid "0fa5bfbd-5fc1-441b-85b6-e1f982dbf393")
 		)
@@ -15435,7 +15455,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "2.2 uF"
+		(property "Value" "100 pF"
 			(at 114.681 69.723 0)
 			(hide yes)
 			(show_name no)
@@ -15592,7 +15612,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25804"
 			(at 46.8884 175.768 0)
 			(hide yes)
 			(show_name no)
@@ -15771,7 +15791,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25804"
+		(property "LCSC" "C23138"
 			(at 190.754 29.21 0)
 			(hide yes)
 			(show_name no)
@@ -17151,7 +17171,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "2.2 uF"
+		(property "Value" "100 pF"
 			(at 104.521 69.723 0)
 			(hide yes)
 			(show_name no)
@@ -17807,7 +17827,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "2.2 uF"
+		(property "Value" "100 pF"
 			(at 109.601 69.723 0)
 			(hide yes)
 			(show_name no)
@@ -19853,7 +19873,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25804"
+		(property "LCSC" "C23138"
 			(at 190.754 39.37 0)
 			(hide yes)
 			(show_name no)
@@ -20404,7 +20424,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25744"
+		(property "LCSC" "C25804"
 			(at 47.752 184.0484 0)
 			(hide yes)
 			(show_name no)
@@ -22197,7 +22217,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "2.2 uF"
+		(property "Value" "100 pF"
 			(at 99.441 69.723 0)
 			(hide yes)
 			(show_name no)
@@ -23234,7 +23254,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C25804"
+		(property "LCSC" "C23138"
 			(at 190.754 34.29 0)
 			(hide yes)
 			(show_name no)
@@ -23695,7 +23715,7 @@
 				)
 			)
 		)
-		(property "LCSC" "C12530"
+		(property "LCSC" "C100082"
 			(at 47.371 160.1216 0)
 			(hide yes)
 			(show_name no)
