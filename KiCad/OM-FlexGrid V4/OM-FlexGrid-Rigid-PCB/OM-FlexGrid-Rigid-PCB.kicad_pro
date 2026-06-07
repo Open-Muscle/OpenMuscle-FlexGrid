@@ -39,9 +39,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.8,
-          "height": 1.27,
-          "width": 2.54
+          "drill": 0.0,
+          "height": 0.7874,
+          "width": 1.0414
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -240,7 +240,7 @@
       "internal_id": "",
       "mfg": "",
       "mpn": "",
-      "sch_revision": ""
+      "sch_revision": "V4"
     },
     "layer_pairs": [],
     "layer_presets": [],
@@ -526,7 +526,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "V3 Rigid PCB Gerber/",
+      "plot": "OM-FlexGrid-Rigid-V4-Gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "OM-FlexGrid-Rigid-PCB.step",
@@ -663,6 +663,12 @@
           "label": "Exclude from Board",
           "name": "${EXCLUDE_FROM_BOARD}",
           "show": true
+        },
+        {
+          "group_by": false,
+          "label": "LCSC",
+          "name": "LCSC",
+          "show": false
         }
       ],
       "filter_string": "",
@@ -718,16 +724,16 @@
       {
         "filename": "OM-FlexGrid-Rigid-PCB.kicad_sch",
         "name": "OM-FlexGrid-Rigid-PCB",
-        "uuid": "00000000-0000-0000-0000-000000000000"
+        "uuid": "ea195db3-1512-4914-b2e6-ecba2a4e38e5"
       }
     ],
-    "used_designators": "",
+    "used_designators": "R16-18,J8-9,D5,#PWR20-21,#PWR23,#PWR71",
     "variants": []
   },
   "sheets": [
     [
       "ea195db3-1512-4914-b2e6-ecba2a4e38e5",
-      "Root"
+      "OM-FlexGrid-Rigid-PCB"
     ]
   ],
   "text_variables": {},

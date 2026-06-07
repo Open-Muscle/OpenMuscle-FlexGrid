@@ -1,0 +1,3 @@
+Placement file: 'D:\MT2-TX\OneDrive - TURFPTAx\Documents\GitHub\OpenMuscle-FlexGrid\KiCad\OM-FlexGrid V4\OM-FlexGrid-Rigid-PCB\OM-FlexGrid-Rigid-PCB-all.pos'.
+Info: Component count: 42.
+Info: Done.

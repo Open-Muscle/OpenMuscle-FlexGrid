@@ -1,0 +1,48 @@
+### Footprint positions - created on 2026-05-30T16:59:44 ###
+### Printed by KiCad version 10.0.2
+## Unit = mm, Angle = deg.
+## Side : All
+# Ref     Val                          Package                     PosX       PosY       Rot  Side
+BOOT1     SW_Push                      EVQP2P02M               168.9250  -116.1500  -90.0000  top
+C5        100_nF                       C_0603_1608Metric       162.7250  -114.0000    0.0000  top
+C6        4.7uF                        C_0805_2012Metric       157.5500   -92.5000    0.0000  top
+C7        4.7uF                        C_0805_2012Metric       161.9500   -91.7500  180.0000  top
+C8        2.2_uF                       C_0603_1608Metric       145.0000   -85.2250  -90.0000  top
+C10       0.1_uF                       C_0603_1608Metric       157.7500  -111.7750   90.0000  top
+C11       2.2_uF                       C_0603_1608Metric       156.2500  -111.7750   90.0000  top
+C12       2.2_uF                       C_0603_1608Metric       168.7250  -120.4000  180.0000  top
+C13       2.2_uF                       C_0603_1608Metric       168.7250  -121.9000  180.0000  top
+C14       2.2_uF                       C_0603_1608Metric       168.7250  -123.4000  180.0000  top
+C15       2.2_uF                       C_0603_1608Metric       168.7250  -124.9000  180.0000  top
+D1        1N5819                       D_SOD-123               144.5000   -93.8500   90.0000  top
+D2        CHRG_LED                     LED_0805_2012Metric     143.5625   -79.5000    0.0000  top
+D3        BAT54C                       SOT-23                  152.4500   -92.4375  -90.0000  top
+H1        MountingHole_Pad             MountingHole_2.2mm_M2   168.5000   -75.5000  -90.0000  top
+H2        MountingHole_Pad             MountingHole_2.2mm_M2   168.0000  -131.0000  -90.0000  top
+H3        MountingHole_Pad             MountingHole_2.2mm_M2   145.0000  -131.0000  -90.0000  top
+H4        MountingHole_Pad             MountingHole_2.2mm_M2   145.0000   -75.5000  -90.0000  top
+IC1       ICM-42688-P                  IIM42352                154.1000  -109.5000  -90.0000  top
+MAX1      ~                            SOT-23-6                157.5500   -83.3625  -90.0000  top
+MENU1     SW_Push                      EVQP2P02M               144.4250  -106.6500   90.0000  top
+Q2        VP0610T_or_BSS84             SOT-23                  170.5625   -87.4500  180.0000  top
+Q3        IRLML2060                    SOT-23                  162.0500   -83.9375  -90.0000  top
+R1        5.1K                         R_0603_1608Metric       162.6750  -106.0000  180.0000  top
+R2        5.1K                         R_0603_1608Metric       163.9250  -112.0000  180.0000  top
+R3        1K                           R_0603_1608Metric       157.6750   -78.5000    0.0000  top
+R4        2k                           R_0603_1608Metric       142.0000   -85.0000  -90.0000  top
+R5        150                          R_0603_1608Metric       143.6750   -81.5000    0.0000  top
+R6        5.1K                         R_0603_1608Metric       162.6750  -115.5000    0.0000  top
+R7        100k                         R_0603_1608Metric       171.0000   -83.0000    0.0000  top
+R8        100k                         R_0603_1608Metric       171.1750   -84.5000  180.0000  top
+R9        100k                         R_0603_1608Metric       153.1750   -87.5000    0.0000  top
+R12       10k                          R_0603_1608Metric       165.7350  -120.4600    0.0000  top
+R13       10k                          R_0603_1608Metric       165.7350  -121.9600    0.0000  top
+R14       10k                          R_0603_1608Metric       165.7350  -123.4600    0.0000  top
+R15       10k                          R_0603_1608Metric       165.7350  -124.9600    0.0000  top
+SELECT1   SW_Push                      EVQP2P02M               144.4250  -114.1500   90.0000  top
+SW_PWR1   SW_Push                      EVQP2P02M               156.4250   -73.8500  -90.0000  top
+SW_RST1   SW_Push                      EVQP2P02M               144.9250  -121.6500  -90.0000  top
+U3        TPS7A03                      SOT-23-5                159.8625   -89.0000  180.0000  top
+U4        LTC4054ES5-4.2_or_STC4054GR  TSOT-23-5               143.5500   -88.8625   90.0000  top
+U5        USBLC6-2SC6                  SOT-23-6                162.6125  -108.9500    0.0000  top
+## End

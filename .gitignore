@@ -1,2 +1,9 @@
 # Claude Code
 CLAUDE.md
+
+# KiCad transient / per-session junk
+_autosave-*
+*.lck
+~*.lck
+tmp*.rpt
+.claude/
