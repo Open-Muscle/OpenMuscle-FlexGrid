@@ -95,6 +95,34 @@ Issues we hit during V3 design / V4 LCSC selection that are now fixed in V4:
 
 ---
 
+## Known carry-forward concerns from V3
+
+These items are present on the V4 board, were either copied from V3 unchanged or built in speculatively, and have **NOT been validated in the V4 configuration**. Documented here so future bring-up does not get blindsided.
+
+### Haptic feedback circuit (built but untested)
+
+V4 carries forward the haptic motor driver from V3 (IRLML2060 N-channel MOSFET on a haptic GPIO line, driving a small DC vibration motor through a header). The driver was placed on V3 and has been retained in V4 as a "just in case" feature for future user-feedback work, **but it has not been bench-tested in this configuration on any V3 board, and will arrive on V4 unvalidated**.
+
+Treat haptic as an **optional / experimental feature** for now. If V4 bring-up needs haptic for a demo, expect a debug pass: gate-level on the MOSFET, motor selection, current draw at startup, and any required flyback protection.
+
+The firmware should default the haptic GPIO to "off" and only enable it behind an explicit opt-in setting, so users running a standard recording or inference session do not get unexpected vibration.
+
+### ADC matrix-row capacitors (C12, C13, C14, C15)
+
+V4 currently carries the same **2.2 uF** caps on the 4 ADC sense lines that V3 originally shipped with, and the JLCPCB plugin has them set to populate (BOM and POS toggled ON).
+
+**This is the same configuration that on V3 caused the column-to-column bleed problem.** Each 2.2 uF cap forms a ~22 ms RC time constant with its associated 10 kΩ pulldown on the row, meaning the ADC cannot settle between mux column-switches at the V3 scan rate. The fix that brought V3 to "production-quality matrix" status was to **physically remove C12 through C15** from both populated boards. After removal the signal range improved roughly 9x and per-column carryover dropped to about 22% (acceptable, decaying to noise floor within 3 columns). V3's bring-up README documents the original symptom and the removal procedure.
+
+V4 needs a decision here before fab. Three viable options:
+
+1. **Leave the 2.2 uF parts in the JLC BOM**, then physically remove them during V4 bring-up the same way V3 did. Wastes the per-board part cost (small, the caps are pennies on Basic tier) but minimizes the fab-time decision. Lowest cognitive risk.
+2. **Toggle C12 through C15 to BOM-OFF and POS-OFF** in the JLCPCB plugin so JLC does not populate them at all. Hand-solder only if matrix bench-testing on a bare board shows they are needed for noise filtering. Cleanest path; matches the empirical outcome from V3.
+3. **Change the V4 value to ~100 pF** (same 0603 footprint, new LCSC part number). The new RC drops from 22 ms to under 2 microseconds, well below the per-column dwell time, so column-to-column bleed disappears. Keeps the high-frequency noise filtering benefit. Requires re-tagging the parts in the plugin and re-generating fab files.
+
+Option 2 is the safest given the V3 empirical evidence. Option 3 is the most engineering-correct but adds rework. Option 1 wastes a few pennies per board but ships fastest.
+
+---
+
 ## Manufacturing (JLCPCB)
 
 V4 was prepared for JLCPCB SMT assembly using the [`Bouni/kicad-jlcpcb-tools`](https://github.com/Bouni/kicad-jlcpcb-tools) KiCad plugin. The full workflow we use across revisions is captured at `docs/JLCPCB_WORKFLOW.md` in this repository.
@@ -173,6 +201,8 @@ The authoritative per-designator list lives in the schematic and the JLCPCB plug
 
 - [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`)
 - [ ] **V4 Flex PCB**: bump the FFC tail width from 11.1 mm to **10.5 mm** per the Wurth 687120183722 datasheet. This fix has not yet landed in the V4 Flex folder; do it before ordering the matching flex.
+- [ ] **Decide the fate of C12, C13, C14, C15** (the 2.2 uF ADC matrix-row caps). Default is populate-then-remove like V3; recommended cleaner path is BOM-OFF / POS-OFF in the plugin before generating final fab files. See [Known carry-forward concerns from V3](#known-carry-forward-concerns-from-v3) for the full reasoning.
+- [ ] **Flag haptic as experimental in firmware.** The haptic driver hardware (Q?, IRLML2060 on the haptic GPIO) ships unvalidated. Firmware should default the haptic GPIO low and only drive it behind an explicit opt-in.
 - [ ] **Final BOM scan**: open `jlcpcb/production_files/BOM-OM-FlexGrid-Rigid-PCB.csv` and confirm no surprise Extended-tier parts with thin stock slipped in. The plugin's auto-suggestions occasionally rotate inventory between sessions.
 - [ ] **Order parts for hand assembly** (need physical inventory before boards arrive):
     - microSD socket: LCSC C428492 or Mouser equivalent (10 + spares)
