@@ -31,8 +31,26 @@ from typing import List, Tuple
 HERE = Path(__file__).resolve().parent
 FLEX_DIR = HERE.parent / "KiCad" / "OM-FlexGrid V4" / "OM-FlexGrid-Flex"
 
-STIFFENER_IN = FLEX_DIR / "FFC-Stiffener_Faces.svg"
-CUTOUT_IN = FLEX_DIR / "V4CurveCutout_Faces.svg"
+
+def _pick_source(*candidates: str) -> Path:
+    """Return the first candidate that exists in FLEX_DIR.
+
+    Fusion 360 / Shaper Origin re-exports can land with or without the
+    "_Faces" suffix depending on how the export dialog is configured.
+    Prefer the non-suffixed (newer) name when present so a re-export
+    automatically supersedes the older snapshot.
+    """
+    for name in candidates:
+        p = FLEX_DIR / name
+        if p.exists():
+            return p
+    raise SystemExit(
+        f"could not find any of {candidates} in {FLEX_DIR}"
+    )
+
+
+STIFFENER_IN = _pick_source("FFC-Stiffener.svg", "FFC-Stiffener_Faces.svg")
+CUTOUT_IN = _pick_source("V4CurveCutout.svg", "V4CurveCutout_Faces.svg")
 
 STIFFENER_OUT = FLEX_DIR / "V4-Stiffener-for-KiCad.svg"
 CUTOUT_OUT = FLEX_DIR / "V4-EdgeCuts-for-KiCad.svg"
