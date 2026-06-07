@@ -1,236 +1,172 @@
-# OM-FlexGrid V3
+# OM-FlexGrid V4
 
-> **Status: PRODUCTION-QUALITY MATRIX (as of 2026-05-13).** Two boards populated and brought up end-to-end. The Wurth 687120183722 FFC interconnect mates cleanly with the integrated stiffened flex tail (0.20 mm FR4 stiffener, bottom-side, total ~0.31 mm — on Wurth's 0.30 ±0.05 mm spec). Sensor matrix delivers **clean single-cell press detection across all 60 sensors** — peak ~1100 ADC counts on direct press, 22% carryover to the next column, decaying to the noise floor within 3 columns. Idle baseline is exactly 0. Scan rate 59 Hz. UDP telemetry over Wi-Fi confirmed reaching the desktop visualizer (`openmuscle web` and `openmuscle receive`). **The matrix is now usable as a real ML training data source — for the first time in the project's history.**
+> **Status: IN DESIGN (as of 2026-06-07).** Schematic and PCB are routed. DRC passes with zero unconnected nets. Production files generated via the `kicad-jlcpcb-tools` plugin and ready for upload to JLCPCB. Not yet fabricated, not yet brought up. Treat this revision as a paper design pending a fab cycle.
 >
-> Firmware that makes this work lives at [Open-Muscle/FlexGridV3-Firmware](https://github.com/Open-Muscle/FlexGridV3-Firmware) (v0.1.7, MIT). Six non-obvious scan techniques were needed; they're documented in that repo's `README` under "Sensor scan techniques".
->
-> Open items: characterizing one occasionally-glitchy sensor on board #1; diagnosing IO2 (= ROW_1) GPIO-output anomaly on board #1 (suspect R13 or its trace); ICM-42688-P IMU driver still TODO; software baseline subtraction may further reduce the 22% carryover toward <5%.
+> Open items before pulling the trigger: final LDO part selection, double-check bottom-side / DNP exclusions in the generated BOM, final 3D / mechanical fit review against the bracelet form.
 
-Third major revision of the Open Muscle FlexGrid wearable sensor platform. V3 standardizes the flex-to-rigid interconnect on a 20-pin 0.5 mm-pitch ZIF FFC connector, eliminating the hand-soldered pin-header link used through V2.
+Fourth major revision of the Open Muscle FlexGrid wearable sensor platform. V4 builds on the V3 production baseline (which validated the FFC interconnect and proved the 60-cell matrix as a usable ML training data source) and adds on-device storage, a status indicator, and a slimmer board profile.
 
 ---
 
-## Overview
+## What is new in V4 vs V3
 
-V3 is two paired PCBs, mated by a single FFC ribbon formed by the flex PCB's own tail.
+| Area | V3 | V4 | Why |
+|---|---|---|---|
+| **On-device storage** | None | **microSD socket** (SPI mode) | Local data logging and on-device model storage; lets the band run untethered for a session and offload later |
+| **Status indication** | OLED only | **RGB status LED** (3-channel PWM) | Glance-tells "what is the band doing" without looking at the OLED; survives an OLED-off power state |
+| **Power-on indicator** | None | Provided by the RGB LED's idle color | One fewer LED in the BOM; cleaner board |
+| **Board orientation** | Original V3 layout | **Reoriented for slimmer bracelet fit** | Long axis aligned with the forearm; lower profile against the skin |
+| **Diode footprints** | Mixed (D-SOD-123F seen on 1N5819 and 1N4007) | **Standardized on SOD-123** (1N4007W style) | Matches what LCSC actually stocks; avoids the V3 mid-design footprint mismatch we hit |
+| **Resistor packages** | Mixed 0402 / 0603 | **All 0603** | Easier hand rework, broader LCSC stock, more forgiving for the prototype-quantity user |
 
-| Board | Role | Layers | Mating |
-|-------|------|--------|--------|
-| **OM-FlexGrid-Flex** | 15×4 Velostat sensor matrix on a flex PCB. The PCB tail itself is the male FFC. | 2L flex | Inserts into J3 on rigid |
-| **OM-FlexGrid-Rigid-PCB** | ESP32-S3 controller, mux, power, display, IMU. | 4L rigid (1.6 mm) | Hosts J3 = Wurth 687120183722 |
+What stays the same as V3: 60-sensor 15x4 Velostat matrix on the flex PCB, ESP32-S3-WROOM-1-N16R8 controller, CD74HC4067 mux, Wurth 687120183722 FFC interconnect, MAX16054 soft power, LTC4054-class charger, TPS7A03 LDO family (specific part TBD this revision), USB-C power and data, BAT54C diode-OR for VBUS-or-VBAT, ICM-42688-P IMU (genuine TDK or pin-compatible part, awaiting final LCSC stock decision).
 
 ---
 
-## Flex-to-Rigid Interconnect (NEW IN V3)
+## microSD card socket (NEW IN V4)
 
-The flex PCB tail is fabricated with 20 exposed gold pads on the top copper layer (F.Cu) and a stiffener on the bottom. It plugs directly into the Wurth ZIF connector on the rigid board — no separate FFC cable.
+Wired in 1-bit SPI mode for simplicity and ESP32-S3 compatibility. SDIO 4-bit mode is not used; SPI is sufficient for logging sensor frames at the band's scan rates with margin.
 
-### Connector (rigid side, J3)
+| Pin name on socket | Wired to | Role in SPI mode |
+|---|---|---|
+| DATA0 (DAT0) | ESP32-S3 SPI MISO | data out of card |
+| CMD | ESP32-S3 SPI MOSI | data in to card |
+| CLK | ESP32-S3 SPI SCK | clock |
+| DATA3 / CD | ESP32-S3 GPIO (CS) | chip select |
+| VCC | 3V3 | power |
+| GND, shield, mounting tabs | GND | return + mechanical |
+
+### Connector
 
 | Field | Value |
-|-------|-------|
-| Manufacturer P/N | **Wurth 687120183722** |
-| Mouser P/N | 710-687120183722 |
-| Series | WR-FPC SMT ZIF Horizontal Low Profile |
-| Pin count | 20 |
-| Pitch | 0.50 mm |
-| Contact orientation | **Bottom Contact** |
-| Actuator | Flip-lock ZIF (top) |
-| Operating temp | -25 °C to +85 °C |
-| Datasheet | https://www.we-online.com/components/products/datasheet/687120183722.pdf |
+|---|---|
+| Manufacturer P/N | Molex 5033981892 |
+| LCSC P/N | **C428492** |
+| Mount | Surface-mount, push-push, top side of rigid board |
+| Hand-solder | **Yes, explicitly excluded from JLCPCB assembly** (see [Hand-soldered parts](#hand-soldered-parts) below) |
 
-"Bottom Contact" means the connector's contacts are on the underside of the housing, so **the FFC's contact pads must face the rigid PCB when inserted.**
-
-### FFC tail (flex side, J1) — design spec
-
-The tail is integral to the flex PCB; there is no separate FFC cable.
-
-| Parameter | Value | Source |
-|-----------|-------|--------|
-| Pin count | 20 | matches J3 |
-| Pitch | 0.50 mm | Wurth datasheet |
-| Contact pad width | 0.30 mm | Wurth datasheet |
-| Exposed contact length | 1.45 mm (min) | Wurth datasheet |
-| Pin-to-pin span (centre of pin 1 → pin 20) | 9.50 mm | 19 × 0.5 mm |
-| Tail width across pads | ≥ 11.10 mm | Pl + 2× 0.80 mm end margin |
-| Insertion depth into housing | ~3.8 mm | Wurth datasheet |
-| **Total FFC tail thickness** (flex + stiffener) | **0.30 mm ±0.05 mm** | Wurth datasheet |
-| Contacts on layer | **F.Cu** (top) — must face down on insertion | KiCad project |
-| Stiffener side | **B side** (opposite contacts) | required by Wurth |
-| Plating | ENIG (gold) recommended | reliable mating |
-
-### Orientation gotcha
-
-Because the rigid connector is bottom-contact and the FFC pads are on F.Cu (top side of flex):
-
-- During use the flex tail must enter J3 with **F.Cu facing the rigid board**.
-- In the wearable, the sensor matrix sits on top of the forearm with sensor pads up; the tail folds 180° beneath the matrix and its contacts naturally end up facing down — which is what we want. Verify in the 3D view before sending to fab.
+The microSD socket is intentionally hand-soldered after JLC assembly rather than included in the SMT run. Rationale: only one part, easy to solder, avoids a setup fee, and removes a parts-availability risk from the assembly order.
 
 ---
 
-## Flex PCB Fabrication (JLCPCB)
+## RGB status LED (NEW IN V4)
 
-These are the order parameters for JLCPCB's flex PCB service. Cross-check against `OM-FlexGrid-Flex/V2-1 Gerber.zip` (current latest) before submitting.
+Discrete common-cathode RGB LED in a 1.6 x 1.6 mm (0603-style) package, driven by three PWM-capable GPIOs through current-limiting resistors. Chosen over an addressable smart LED (WS2812 family) specifically for **zero quiescent current** when the LED is dark, which protects the 500 mAh battery's standby time.
 
-| Parameter | Value |
-|-----------|-------|
-| Layers | 2 |
-| Material | Polyimide flex |
-| Base thickness | 0.11 mm (JLCPCB default 2L) |
-| Coverlay | Yellow polyimide (default) |
-| Surface finish | **ENIG** (required for reliable FFC mating; HASL will not work) |
-| Copper weight | 1 oz (0.5 oz also fine) |
-| **Stiffener material** | **FR4** |
-| **Stiffener thickness** | **0.20 mm** |
-| **Stiffener side** | **Bottom** (opposite the FFC contacts) |
-| Stiffener placement | Drawn on `User.1 (Stiffener)` layer in KiCad |
-| EMI shielding | None |
-| 3M tape backing | Optional (none required for FFC) |
+### Wiring
 
-**Total FFC tail thickness = 0.11 mm flex + 0.20 mm stiffener ≈ 0.31 mm** ✓ within Wurth's 0.30 ±0.05 mm window.
+| Channel | GPIO | Series resistor | Notes |
+|---|---|---|---|
+| Red | GPIO 40 | 330 ohm | adjust if too bright |
+| Green | GPIO 41 | 330 ohm | |
+| Blue | GPIO 42 | 330 ohm | |
+| Common cathode | GND | n/a | shared return |
 
-### Stiffener outline rules
+LCSC examples: C2827305-class 0603 common-cathode RGB. Final LCSC part number is recorded in the generated BOM at `jlcpcb/production_files/BOM-OM-FlexGrid-Rigid-PCB.csv`.
 
-The stiffener is a rectangular FR4 backer bonded to the bottom side of the flex tail. JLCPCB needs an outline drawn on a dedicated layer so they know where to glue it.
+### Status palette (firmware target)
 
-- Layer: `User.1` (already named "Stiffener" in `OM-FlexGrid-Flex.kicad_pcb`).
-- Shape: rectangle covering the **full width of the FFC tail** and extending from the **board edge** at least **5 mm past the last contact pad** (≈ 7 mm total length is typical). This puts the entire ZIF clamp area on stiffener.
-- Do not let the stiffener cross the bend region of the flex — keep it confined to the tail.
-- When uploading to JLCPCB, in the order form select stiffener side = **Bottom side**, material = **FR4**, thickness = **0.2 mm**.
+The exact palette is firmware-defined; the V4 hardware just provides the channels. Suggested defaults:
 
-### Notes on the current J1 footprint
-
-`OpenMuscleDevKit:20Pin-FFC` (used as J1) has 20 pads at 0.5 mm pitch, 0.30 × 2.60 mm each, on F.Cu — geometry matches Wurth's recommended FFC pattern. Two items to confirm before fab:
-
-1. **Soldermask opening** on the contact area should match or exceed the 1.45 mm exposed-contact length (KiCad's mask expansion typically handles this; verify in F.Mask).
-2. **Stiffener layer is currently empty** — there is no shape drawn on `User.1`. You need to add a rectangle there before generating new gerbers, otherwise JLCPCB has no stiffener outline to follow. The previous V2-1 gerber already includes `OM-FlexGrid-Flex-Stiffener.gbr`, so the stiffener was authored as a separate file last round; either re-import it onto User.1 or redraw it.
-
----
-
-## Rigid PCB
-
-4-layer, 1.6 mm, ESP32-S3 host. No architectural changes from V2. See `OM-FlexGrid-Rigid-PCB/OM-FlexGrid-Rigid-PCB.csv` for the full BOM.
-
-### Key components
-
-| Ref | Component | Function |
-|-----|-----------|----------|
-| U? | ESP32-S3-WROOM-1-N16R8 | MCU (16 MB Flash, 8 MB PSRAM) |
-| MUX | CD74HC4067 | 16:1 analog mux (15 columns used) |
-| OLED | SSD1306 128×32 | I²C status display |
-| IC1 | ICM-42688-P | 6-DOF IMU (I²C, optional) |
-| MAX1 | MAX16054 | Soft power latch |
-| — | TPS7A0333 | 3.3 V LDO |
-| — | LTC4054ES5 | Single-cell LiPo charger |
-| Q1, Q3 | IRLML2060 | Haptic motor / aux MOSFET |
-| **J3** | **Wurth 687120183722** | **20-pin ZIF, FFC to flex matrix** |
-| J4 | USB-C (HRO TYPE-C-31-M-12) | Charge / programming |
-
-### Sensor matrix scan
-
-CD74HC4067 walks 15 columns to 3.3 V one at a time; four row lines with 10 kΩ pulldowns are sampled on ESP32 ADC1. 60 readings per scan frame.
-
----
-
-## Bring-up findings (2026-05-13)
-
-Five firmware-side issues had to be solved before the matrix produced clean data. They're all documented in detail in the [firmware repo's README](https://github.com/Open-Muscle/FlexGridV3-Firmware#sensor-scan-techniques), but the hardware-relevant takeaways are:
-
-| Issue | Root cause | Where the fix lives |
+| State | Color | Pattern |
 |---|---|---|
-| Row sneak path — press lights up whole row | CD74HC4067 unselected channels are high-Z; press on one cell forms a sneak path through other pressed cells via the floating columns | Firmware: drive non-target rows to OUTPUT LOW while reading the target row |
-| Mux address glitches kick energy into pressed column | MicroPython `Pin.value()` is ~1 µs and S0–S3 update non-atomically; HC4067 settles in 80 ns and routes intermediate addresses | Firmware: raise mux `E` (disable) before changing address, lower it after |
-| Scan-direction bleed (right of pressed cell) | ADC sample-and-hold cap holds the previous cell's voltage; first read after `Pin.init()` mode change returns a stale sample | Firmware: 30 µs row discharge + discard-first-read |
-| Slow Wi-Fi join → permanent UDP silence | `connect()` blocked for 20 s, then `RuntimeError` skipped socket creation | Firmware: create UDP socket in `__init__` |
-| `openmuscle receive` heatmap silently dropped V3 packets | Viz hardcoded 16-column matrix; V3 sends 15 | Host: shape auto-detection in [OpenMuscle-Software](https://github.com/Open-Muscle/OpenMuscle-Software) |
+| Booting / Wi-Fi connecting | blue | slow breathe (1 Hz) |
+| Idle, no peer | white | dim solid |
+| Streaming sensor data | green | solid |
+| Recording (paired with PC) | yellow | slow breathe |
+| Sending predictions to hand | purple | solid |
+| Sleeping / deep idle | off | n/a |
+| Wi-Fi disconnected | orange | fast blink (3 Hz) |
+| Error / sensor fault | red | fast blink |
 
-**One open hardware finding** worth chasing on the next revision or as a follow-up on board #1: **GPIO 2 (ROW_1) does not drive HIGH cleanly.** When the firmware sets the pin to `Pin.OUT(value=1)`, the ADC reads back ~55 (≈ 0 V) instead of the expected ~3100. Other rows on the same board behave normally. Suspect a bad solder joint on R13 (the 10 kΩ pulldown for ROW_1) or a local trace short. Doesn't break the scan (the pin still works as an ADC input and reaches GND well enough for the ground-other-rows trick), but worth probing with a multimeter.
+---
 
-## Design suggestions for V4
+## Layout reorientation
 
-Captured here so they don't get lost. None of these are *needed* — V3 works — but they'd make the next revision easier to bring up and more robust:
+V4 rotates the long axis of the rigid board so it hugs the forearm rather than crossing it. The component placement was reworked around the new aspect ratio: power management clustered at one end, ESP32 and OLED at the other, microSD socket on the side that faces away from the skin so the user can pop a card in or out without removing the band.
 
-- **Per-row series resistor (~100 Ω–1 kΩ)** between each ROW_N net and the ESP32 ADC pin. Limits short-circuit current if a row is accidentally driven high while a column is also high, and dampens RC oscillations on long traces. Cheap insurance.
-- **Pick row GPIOs from outside ADC1 if possible**, OR accept the ADC-sharing quirks documented above. ESP32-S3 GPIO1–10 are ADC1-shared and have the SAH-stale-sample behavior. If you only need 4 row ADCs, IO11–IO20 (ADC2) work too, with the caveat that ADC2 conflicts with Wi-Fi RF — so only sample when Wi-Fi is idle, or stay on ADC1 and use the discard-first-read trick from V3 firmware.
-- **Move the BOOT button further from the FFC connector** so accidental flex pressure or a stray tool tip can't depress it during assembly. The "stuck in download mode at boot" failure mode bit us on V3 bring-up.
-- **Consider per-cell Velostat patches** instead of one continuous sheet, or a thin spacer mask with cell-sized holes, to reduce mechanical bleed between adjacent cells. The firmware fixes only kill electrical bleed; Velostat compression spreads laterally as a material property.
-- **Label the FFC pin 1 marker on the silkscreen for both flex and rigid.** Both V3 footprints turned out to be internally consistent, but the schematic-only review process couldn't easily confirm that — silkscreen markers make the inspection trivial.
-- **Add test pads** on the four row nets (ROW_0–ROW_3), the four mux address lines (S0–S3), and the mux `E`. Makes scope/multimeter probing during bring-up much easier than soldering wires to 0603s.
+---
 
-## V3 release files (sent to fab 2026-04-25)
+## Footprint cleanup applied
 
-| Board | Source | Gerber bundle | BOM |
-|-------|--------|---------------|-----|
-| Flex | `OM-FlexGrid-Flex/OM-FlexGrid-Flex.kicad_*` | `OM-FlexGrid-Flex/V3 Flex PCB Gerber.zip` | n/a (no electronic components — integrated FFC tail only) |
-| Rigid | `OM-FlexGrid-Rigid-PCB/OM-FlexGrid-Rigid-PCB.kicad_*` | `OM-FlexGrid-Rigid-PCB/V3 Rigid PCB Gerber.zip` | `OM-FlexGrid-Rigid-PCB/OM-FlexGrid-Rigid-PCB.csv` |
+Issues we hit during V3 design / V4 LCSC selection that are now fixed in V4:
 
-Schematic PDFs (export instructions below) live in `Schematics/` at the repo root.
+- **1N5819 and 1N4007** previously used the `D_SOD-123F` footprint. LCSC primarily stocks the `1N5819W` and `1N4007W` variants in **SOD-123** (no `F` suffix). V4 swaps both diode footprints to plain SOD-123 to match what is actually available at the manufacturer.
+- **Resistors** that the JLCPCB plugin's "auto-select alike" feature had silently downgraded to 0402 are all forced back to **0603**. This matches the LCSC Basic-tier inventory the design draws from and keeps hand rework feasible.
+- **C9 (100 uF)** previously sat on an 0603 footprint that cannot physically host a 100 uF cap. Footprint upsized to match the chosen part.
 
-### Repository layout (V3)
+---
+
+## Manufacturing (JLCPCB)
+
+V4 was prepared for JLCPCB SMT assembly using the [`Bouni/kicad-jlcpcb-tools`](https://github.com/Bouni/kicad-jlcpcb-tools) KiCad plugin. The full workflow we use across revisions is captured at `docs/JLCPCB_WORKFLOW.md` in this repository.
+
+### Generated output files (in `OM-FlexGrid-Rigid-PCB/jlcpcb/`)
 
 ```
-OM-FlexGrid V3/
-├── README.md                              # this file
-├── OM-FlexGrid-Flex/
-│   ├── OM-FlexGrid-Flex.kicad_sch
-│   ├── OM-FlexGrid-Flex.kicad_pcb
-│   ├── OM-FlexGrid-Flex.kicad_pro
-│   ├── V3 Flex PCB Gerber.zip             # ← V3 release gerbers
-│   ├── V3 Flex PCB Gerber/                # ← unzipped gerbers (incl. Stiffener.gbr)
-│   ├── FlexStiff.stl                      # 3D model of stiffener (reference)
-│   └── (older V1/V2 Gerber folders kept for history)
-└── OM-FlexGrid-Rigid-PCB/
-    ├── OM-FlexGrid-Rigid-PCB.kicad_sch
-    ├── OM-FlexGrid-Rigid-PCB.kicad_pcb
-    ├── OM-FlexGrid-Rigid-PCB.kicad_pro
-    ├── OM-FlexGrid-Rigid-PCB.step
-    ├── OM-FlexGrid-Rigid-PCB.csv          # BOM (KiCad export)
-    ├── V3 Rigid PCB Gerber.zip            # ← V3 release gerbers
-    └── V3 Rigid PCB Gerber/               # ← unzipped gerbers
+jlcpcb/
+|-- gerber/                                       individual Gerber + drill files
+`-- production_files/
+    |-- GERBER-OM-FlexGrid-Rigid-PCB.zip          upload this zip directly to JLCPCB
+    |-- BOM-OM-FlexGrid-Rigid-PCB.csv             BOM with LCSC part numbers
+    `-- CPL-OM-FlexGrid-Rigid-PCB.csv             component placement / pick-and-place
 ```
 
-### How to regenerate the schematic PDFs
+The BOM and CPL **only contain parts JLC will assemble**. Hand-soldered parts are excluded at the plugin level (BOM-OFF and POS-OFF), which keeps the manufacturer's view of the BOM clean and matches the physical reality of the assembled board they ship.
 
-In KiCad's Schematic Editor (`OM-FlexGrid-*.kicad_sch`):
+### Hand-soldered parts
 
-1. *File → Plot…*
-2. Output format: **PDF**
-3. Output directory: `../../Schematics/` (or the repo's top-level `Schematics/` folder)
-4. Filename auto-generated from project name; rename to `OM-FlexGrid-Rigid-V3.pdf` and `OM-FlexGrid-Flex-V3.pdf` after export.
-5. Click **Plot All Pages** (multi-sheet) or **Plot Current Page**.
+These parts are physically present on the V4 board (footprints exist) but are intentionally excluded from the JLC assembly order. The user populates them after the assembled board arrives.
 
-Repeat for both projects so both schematics are checked into `Schematics/` for non-KiCad readers.
+| Designator | Part | Why hand-soldered |
+|---|---|---|
+| microSD socket | Molex 5033981892 (LCSC C428492) | Single part, easy reflow, no setup fee, removes a stock-availability risk |
+| Battery JST terminal | Through-hole | JLC standard SMT assembly does not include through-hole |
+| Pin headers (programming, debug, OLED) | Through-hole | Same reason |
+| Wurth FFC connector (rigid side) | Wurth 687120183722 from Mouser direct | Specific part not consistently at LCSC; user wants the genuine part |
 
----
-
-## Pre-fab checklist
-
-Before sending V3 to JLCPCB:
-
-**Flex PCB**
-- [ ] Stiffener rectangle drawn on `User.1` covering the full FFC tail
-- [ ] J1 pads on F.Cu, F.Mask opening covers contact area
-- [ ] FFC tail edge cut clean and flush at pin-1 / pin-20 datum
-- [ ] Surface finish set to **ENIG** in JLCPCB order form
-- [ ] Stiffener: **FR4, 0.2 mm, Bottom side**
-- [ ] Verify in 3D / fold model that F.Cu of tail faces J3 host PCB
-
-**Rigid PCB**
-- [ ] J3 footprint = `OpenMuscleDevKit:687120183722-20P-Bottom` ✓ already in design
-- [ ] J3 pin-to-net assignment matches J1 on flex (run ERC across boards)
-- [ ] BOM line for J3 = `Wurth 687120183722` (Mouser 710-687120183722)
+The authoritative per-designator list lives in the schematic and the JLCPCB plugin's UI (any designator with BOM-toggle and POS-toggle OFF). The generated BOM and CPL CSVs reflect those exclusions.
 
 ---
 
-## Related Resources
+## Open items before fab
 
-- **Firmware:** https://github.com/Open-Muscle/OpenMuscle-Firmware
-- **Documentation Hub:** https://github.com/Open-Muscle/OpenMuscle-Hub
-- **Project Site:** https://openmuscle.org
-- **Discord:** https://discord.gg/WstCaqUG63
+- [ ] Final LDO part selection (TPS7A03 family; pick the LCSC variant with deepest stock at fab time)
+- [ ] Review the generated `BOM-OM-FlexGrid-Rigid-PCB.csv` end to end for any "Type = Extended" rows with thin stock; substitute equivalent parts where possible
+- [ ] Mechanical / 3D fit check against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`)
+- [ ] Confirm IMU LCSC choice (ICM-42688-P or LSM6DSOX) shows **POP = green check** in the plugin (the V3 baseline hit a POP failure on Tokmas C54308212; pick a part JLC can actually place)
+- [ ] V4 Flex PCB: bump the FFC tail width from 11.1 mm to **10.5 mm** per the Wurth 687120183722 datasheet; this fix has not yet landed in the V4 Flex folder
 
 ---
 
-## License
+## File layout
 
-Hardware released under **CERN Open Hardware License v2.0 (CERN-OHL-S-2.0)**.
+```
+OM-FlexGrid V4/
+|-- OM-FlexGrid-Flex/                        Flex PCB (15x4 sensor matrix + FFC tail)
+`-- OM-FlexGrid-Rigid-PCB/                   Rigid controller board
+    |-- OM-FlexGrid-Rigid-PCB.kicad_pro      KiCad project
+    |-- OM-FlexGrid-Rigid-PCB.kicad_sch      Schematic (24K lines)
+    |-- OM-FlexGrid-Rigid-PCB.kicad_pcb      PCB layout
+    |-- OM-FlexGrid-Rigid-PCB.csv            BOM (KiCad-exported)
+    |-- OM-FlexGrid-Rigid-PCB.step           3D model
+    |-- OM-FlexGrid-Rigid-V4-Gerber/         Standalone Gerber export
+    |-- OM-FlexGrid-Rigid-V4-Gerber.zip      Standalone Gerber zip
+    |-- OmFlexGridArtV4.svg                  Front silkscreen artwork
+    |-- jlcpcb/                              JLCPCB plugin output (use these for ordering)
+    |   |-- gerber/
+    |   `-- production_files/
+    |       |-- GERBER-OM-FlexGrid-Rigid-PCB.zip
+    |       |-- BOM-OM-FlexGrid-Rigid-PCB.csv
+    |       `-- CPL-OM-FlexGrid-Rigid-PCB.csv
+    `-- OM-FlexGrid-Rigid-PCB-backups/       KiCad auto-rotated backups from this design session
+```
+
+---
+
+## Related work
+
+- **V3 status and bring-up findings:** `../OM-FlexGrid V3/README.md`
+- **JLCPCB plugin workflow (generic, applies to all revisions):** `../../docs/JLCPCB_WORKFLOW.md`
+- **Cross-revision comparison table:** `../REVISIONS.md`
+- **Firmware:** [Open-Muscle/FlexGridV3-Firmware](https://github.com/Open-Muscle/FlexGridV3-Firmware) (V4 will likely fork this when fabbed)
