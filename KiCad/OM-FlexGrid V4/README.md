@@ -108,7 +108,7 @@ Treat haptic as an **optional / experimental feature** for now. If V4 bring-up n
 
 The firmware should default the haptic GPIO to "off" and only enable it behind an explicit opt-in setting, so users running a standard recording or inference session do not get unexpected vibration.
 
-### ADC matrix-row capacitors (C12, C13, C14, C15) — RESOLVED
+### ADC matrix-row capacitors (C12, C13, C14, C15): RESOLVED
 
 **Final decision: 100 pF (LCSC C14858, 0603, Basic tier).** Option 3 from the original analysis below.
 
