@@ -2,6 +2,28 @@
 
 > **Status: READY FOR FAB (as of 2026-06-07).** Schematic and PCB are routed. DRC passes with zero unconnected nets. Production files generated via the `kicad-jlcpcb-tools` plugin. Manufacturing strategy decided (see [Manufacturing](#manufacturing-jlcpcb) below): **single-side SMT assembly at JLCPCB for 10 units, plus hand-soldering of all bottom-side parts and through-hole connectors at home.** Not yet ordered. Not yet brought up.
 
+## 📄 Design documents (PDFs)
+
+For people who want to review the design without opening KiCad:
+
+### Rigid PCB
+
+- 📐 [`FlexGridV4-Rigid-Schematic.pdf`](OM-FlexGrid-Rigid-PCB/FlexGridV4-Rigid-Schematic.pdf): full schematic, all sheets, all nets named
+- 🟦 [`FlexGridV4-Rigid-PCB.pdf`](OM-FlexGrid-Rigid-PCB/FlexGridV4-Rigid-PCB.pdf): board layout
+
+### Flex PCB
+
+- 📐 [`FlexGridV4-Flex-Schematic.pdf`](OM-FlexGrid-Flex/FlexGridV4-Flex-Schematic.pdf): sensor matrix schematic
+- 🟦 [`FlexGridV4-Flex-PCB.pdf`](OM-FlexGrid-Flex/FlexGridV4-Flex-PCB.pdf): flex layout including the stiffened FFC tail
+- 🟧 [`FrontCopper_SolderMask.pdf`](OM-FlexGrid-Flex/FrontCopper_SolderMask.pdf): front-side copper + soldermask overlay (useful for sanity-checking the Velostat sensor cell exposures)
+
+### What gets populated and what doesn't
+
+The split between "JLCPCB assembles this" and "I hand-solder this after the boards arrive" is documented in [Hand-soldered parts (full list)](#hand-soldered-parts-full-list) below. tl;dr:
+
+- **JLCPCB assembles all TOP-side SMT parts** (passives, regulators, charger, MUX-driver MOSFETs, MAX16054, USBLC6, IMU, CHRG LED, RGB LED, etc.)
+- **You hand-solder everything else**: all BOT-side SMT (including U1 CD74HC4067 mux and U2 ESP32-S3 module), the microSD socket, the Wurth FFC connector, USB-C, and every through-hole pin header / JST. The per-designator table further down has each part listed by reference designator with solder-difficulty notes.
+
 Fourth major revision of the Open Muscle FlexGrid wearable sensor platform. V4 builds on the V3 production baseline (which validated the FFC interconnect and proved the 60-cell matrix as a usable ML training data source) and adds on-device storage, a status indicator, and a slimmer board profile.
 
 ---
@@ -219,10 +241,22 @@ The authoritative per-designator list lives in the schematic and the JLCPCB plug
 ```
 OM-FlexGrid V4/
 |-- OM-FlexGrid-Flex/                        Flex PCB (15x4 sensor matrix + FFC tail)
+|   |-- OM-FlexGrid-Flex.kicad_pro           KiCad project
+|   |-- OM-FlexGrid-Flex.kicad_sch           Schematic
+|   |-- OM-FlexGrid-Flex.kicad_pcb           PCB layout (flex + integrated FFC tail)
+|   |-- FlexGridV4-Flex-Schematic.pdf        Reviewable schematic PDF
+|   |-- FlexGridV4-Flex-PCB.pdf              Reviewable layout PDF
+|   |-- FrontCopper_SolderMask.pdf           Sensor cell overlay PDF
+|   |-- V4CurveCutout.svg                    Fusion 360 source: flex body outline
+|   |-- FFC-Stiffener.svg                    Fusion 360 source: FFC tail stiffener
+|   |-- V4-EdgeCuts-for-KiCad.svg            Processed: import to Edge.Cuts
+|   `-- V4-Stiffener-for-KiCad.svg           Processed: import to Stiffener user layer
 `-- OM-FlexGrid-Rigid-PCB/                   Rigid controller board
     |-- OM-FlexGrid-Rigid-PCB.kicad_pro      KiCad project
     |-- OM-FlexGrid-Rigid-PCB.kicad_sch      Schematic (24K lines)
     |-- OM-FlexGrid-Rigid-PCB.kicad_pcb      PCB layout
+    |-- FlexGridV4-Rigid-Schematic.pdf       Reviewable schematic PDF
+    |-- FlexGridV4-Rigid-PCB.pdf             Reviewable layout PDF
     |-- OM-FlexGrid-Rigid-PCB.csv            BOM (KiCad-exported)
     |-- OM-FlexGrid-Rigid-PCB.step           3D model
     |-- OM-FlexGrid-Rigid-V4-Gerber/         Standalone Gerber export
