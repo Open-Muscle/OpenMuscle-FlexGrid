@@ -1304,7 +1304,7 @@
 			(uuid "7519f86b-0948-44bd-a15f-4663a308239b")
 		)
 		(embedded_fonts no)
-		(model "EVQ-P2P02M.stp"
+		(model "${KIPRJMOD}/3dmodels/EVQ-P2P02M_aligned.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -1312,7 +1312,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -180 90)
 			)
 		)
 	)
@@ -1850,7 +1850,7 @@
 			(uuid "69ad4ef8-e385-4197-8117-34f10469fed4")
 		)
 		(embedded_fonts no)
-		(model "EVQ-P2P02M.stp"
+		(model "${KIPRJMOD}/3dmodels/EVQ-P2P02M_aligned.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -1858,7 +1858,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -180 90)
 			)
 		)
 	)
@@ -4596,7 +4596,7 @@
 			(uuid "789b29e4-b9f5-443f-aad2-eb86b1aceed8")
 		)
 		(embedded_fonts no)
-		(model "EVQ-P2P02M.stp"
+		(model "${KIPRJMOD}/3dmodels/EVQ-P2P02M_aligned.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4604,7 +4604,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -180 90)
 			)
 		)
 	)
@@ -5355,7 +5355,7 @@
 			(uuid "db8b90dd-a662-4f45-8791-f359647b04cb")
 		)
 		(embedded_fonts no)
-		(model "EVQ-P2P02M.stp"
+		(model "${KIPRJMOD}/3dmodels/EVQ-P2P02M_aligned.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -5363,7 +5363,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -180 90)
 			)
 		)
 	)
@@ -5904,6 +5904,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)
@@ -6094,7 +6095,7 @@
 			(uuid "ea145996-8ab3-4283-b93c-5b3df5f098c5")
 		)
 		(embedded_fonts no)
-		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_RGB_PLCC-6.step"
+		(model "${KICAD10_3DMODEL_DIR}/LED_SMD.3dshapes/LED_WS2812B-Mini_PLCC4_3.5x3.5mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -7268,6 +7269,17 @@
 			(uuid "2b565b45-0397-4f64-ae1d-aa1ec54cb373")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/Wurth_687120183722.step"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0603_1608Metric"
 		(layer "F.Cu")
@@ -9413,7 +9425,7 @@
 			(uuid "54f25184-8c1b-4cb3-8259-0f836199ef96")
 		)
 		(embedded_fonts no)
-		(model "EVQ-P2P02M.stp"
+		(model "${KIPRJMOD}/3dmodels/EVQ-P2P02M_aligned.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -9421,7 +9433,7 @@
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -180 90)
 			)
 		)
 	)
@@ -10373,15 +10385,15 @@
 			(uuid "9462f420-41d4-4ce8-91b3-cc54c99a79fa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Connector_USB.3dshapes/USB_C_Receptacle_HRO_TYPE-C-31-M-12.wrl"
+		(model "${KIPRJMOD}/3dmodels/USB_C_HRO_TYPE-C-31-M-12.step"
 			(offset
-				(xyz 0 0 0)
+				(xyz -4.5 -3.5 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 0)
+				(xyz -90 -0 -0)
 			)
 		)
 	)
@@ -14781,6 +14793,17 @@
 			(uuid "1bb692fe-fdad-4243-8334-7d9cbdd93e37")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/ESP32-S3-WROOM-1.STEP"
+			(offset
+				(xyz -9 -12.7 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -0 -0 -0)
+			)
+		)
 	)
 	(footprint "Connector_PinHeader_2.00mm:PinHeader_1x02_P2.00mm_Vertical"
 		(layer "B.Cu")
@@ -15417,6 +15440,17 @@
 			(uuid "a298ff59-e3ab-4a4c-b0e4-21602b6440b4")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/3dmodels/Molex_503398-1892_aligned.step"
+			(offset
+				(xyz 136 15 -152)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz -180 -0 -0)
+			)
+		)
 	)
 	(footprint "Resistor_SMD:R_0603_1608Metric"
 		(layer "B.Cu")
@@ -16232,6 +16266,7 @@
 			(effects
 				(font
 					(size 1.27 1.27)
+					(thickness 0.15)
 				)
 			)
 		)

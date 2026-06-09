@@ -1,0 +1,18 @@
+# Large binary CAD / 3D / animation assets tracked with Git LFS so they do not
+# bloat git history. Bracket patterns match any case (.step and .STEP, etc.).
+*.[sS][tT][eE][pP] filter=lfs diff=lfs merge=lfs -text
+*.[sS][tT][pP]     filter=lfs diff=lfs merge=lfs -text
+*.[sS][tT][lL]     filter=lfs diff=lfs merge=lfs -text
+*.[wW][rR][lL]     filter=lfs diff=lfs merge=lfs -text
+*.blend            filter=lfs diff=lfs merge=lfs -text
+*.blend[0-9]       filter=lfs diff=lfs merge=lfs -text
+*.glb              filter=lfs diff=lfs merge=lfs -text
+*.gltf             filter=lfs diff=lfs merge=lfs -text
+*.3mf              filter=lfs diff=lfs merge=lfs -text
+
+# KiCad source files stay as diffable text.
+*.kicad_pcb  text
+*.kicad_sch  text
+*.kicad_sym  text
+*.kicad_mod  text
+*.kicad_pro  text

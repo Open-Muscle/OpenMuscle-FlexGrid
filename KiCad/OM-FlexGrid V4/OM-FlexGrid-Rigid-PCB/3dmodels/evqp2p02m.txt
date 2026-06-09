@@ -1,0 +1,13 @@
+﻿"Symbol";"Value";"Unit";
+"TraceParts.PartNumber";"90-02032022-060880";"";
+"REFERENCE";"EVQP2P02M";"";
+"TraceParts.PartTitle";"Natural Push Plate Tactile Switch, Single Pole Single Throw (SPST) 20 mA 2.1mm";"";
+"TraceParts.InstanceId";"90-02032022-0608802N3XX9WWY2MK673V115V3T3RA";"";
+"DESIGN";"Natural Push Plate Tactile Switch, Single Pole Single Throw (SPST) 20 mA 2.1mm";"";
+"TraceParts.PartStatus";"Published";"";
+"TraceParts.PartStatusId";"";"";
+"SUPPLIER";"Panasonic";"";
+"TraceParts.PartVersion";"1.0.0";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"TraceParts.PartLanguage";"en";"";
+"TraceParts.ClassPath";"PANASONIC:90-02032022-060880";"";

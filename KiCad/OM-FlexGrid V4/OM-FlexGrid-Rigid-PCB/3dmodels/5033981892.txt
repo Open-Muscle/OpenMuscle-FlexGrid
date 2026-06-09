@@ -1,0 +1,10 @@
+﻿"Symbol";"Value";"Unit";
+"TraceParts.PartNumber";"90-16042024-020300";"";
+"REFERENCE";"5033981892";"";
+"TraceParts.PartTitle";"microSD Card";"";
+"TraceParts.InstanceId";"90-16042024-020300545FCGX3S62DKQNX5STDADHE";"";
+"SUPPLIER";"Molex";"";
+"DESIGN";"1.10mm Pitch microSD Memory Card Connector, Normal Mount Surface Mount, Push-Push Type, 1.28mm Height";"";
+"TRACEPARTS";"TRACEPARTS";"";
+"TraceParts.PartLanguage";"en";"";
+"TraceParts.PartVersion";"1.0.4";"";
