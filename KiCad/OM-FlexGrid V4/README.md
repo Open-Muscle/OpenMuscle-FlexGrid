@@ -1,6 +1,6 @@
 # OM-FlexGrid V4
 
-> **Status: READY FOR FAB (as of 2026-06-07).** Schematic and PCB are routed. DRC passes with zero unconnected nets. Production files generated via the `kicad-jlcpcb-tools` plugin. Manufacturing strategy decided (see [Manufacturing](#manufacturing-jlcpcb) below): **single-side SMT assembly at JLCPCB for 10 units, plus hand-soldering of all bottom-side parts and through-hole connectors at home.** Not yet ordered. Not yet brought up.
+> **Status: ORDERED 2026-06-12. In fab at JLCPCB.** Schematic and PCB are routed; DRC passes with zero unconnected nets. 10 units submitted for single-side SMT assembly with "Confirm Production file" toggled on. Total landed cost from JLCPCB: $341.84 (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) below for full per-unit numbers including hand-solder add-ons). Watching email for the production-file confirmation request. Not yet brought up.
 
 ## 📄 Design documents (PDFs)
 
@@ -207,6 +207,47 @@ All bottom-side SMT plus every through-hole part. Excluded from the JLC BOM and 
 
 The authoritative per-designator list lives in the schematic and the JLCPCB plugin's UI (any designator with BOM-toggle and POS-toggle OFF). The generated BOM and CPL CSVs reflect those exclusions.
 
+### Cost breakdown (10-unit batch, June 2026)
+
+Real numbers from the V4 fab order placed on 2026-06-12. Use these as a starting estimate for budgeting your own build; LCSC prices and JLC fees move month to month.
+
+**JLCPCB landed cost (rigid + flex, both boards together):**
+
+| Line item | Total | Per board (10 units) |
+|---|---|---|
+| Merchandise (4-layer rigid PCB + flex PCB + single-side SMT assembly) | $204.72 | $20.47 |
+| Shipping (DHL to Texas) | $47.20 | $4.72 |
+| Customs duties + taxes | $71.66 | $7.17 |
+| Sales tax | $18.26 | $1.83 |
+| **Grand total at checkout** | **$341.84** | **~$35** |
+
+So the JLC half of the build lands at **~$35 per assembled board**: top-side SMT populated, ready for the hand-solder add-ons.
+
+**Hand-solder add-on parts (rough qty-10 prices, source noted):**
+
+| Part | Source | Per-unit (qty 10-20) |
+|---|---|---|
+| ESP32-S3-WROOM-1-N16R8 module (U2) | LCSC | ~$5.00 |
+| Wurth 687120183722 FFC connector (J3, rigid side) | Mouser (P/N 710-687120183722) | ~$2.50 |
+| microSD push-push socket (J9) | LCSC C428492 | ~$1.00 |
+| USB-C receptacle (J4) | LCSC | ~$1.00 |
+| CD74HC4067M 16-channel mux (U1) | LCSC | ~$0.70 |
+| Pin headers, JST battery terminal, OLED interface (J1, J2, J5, J6, J7, SCRN1) | LCSC | ~$1.00 combined |
+| BOT-side passives (C9, D4, Q1, R10, R11) | LCSC | ~$0.50 combined |
+| **Hand-solder add-on subtotal** | | **~$12** |
+
+**External parts not on either BOM (per band):**
+
+| Part | Per-unit |
+|---|---|
+| SSD1306 128 x 32 OLED display module | ~$3 |
+| 500 mAh LiPo battery | ~$6 |
+| Cloth bracelet housing (Velcro, fabric, elastic, anti-slip tape) | varies, ~$2 to $5 |
+
+**Estimated total per complete wearable: ~$55 to $60.** That's the JLC landed cost, plus the hand-solder add-ons, plus the display and battery. Cost drops meaningfully above ~50 units because JLC's setup fees amortize and LCSC reel pricing kicks in.
+
+What this does NOT include: the build labor (~30 minutes per board of hand-soldering once the workflow is dialed in), the tooling cost (hot-air station, microscope, stencil), or the dev iterations that got us to a working V4.
+
 ---
 
 ## Pre-fab checklist
@@ -221,18 +262,22 @@ The authoritative per-designator list lives in the schematic and the JLCPCB plug
 - [x] **Footprint cleanup applied:** 1N5819 and 1N4007 standardized on SOD-123, all resistors forced to 0603, C9 footprint upsized to fit the chosen 100 uF cap, MAX1 (MAX16054) footprint moved to TSOT-23-6.
 - [x] **ADC matrix-row caps C12-C15 changed to 100 pF.** Resolves the V3 column-bleed risk in silicon; no mid-bring-up rework needed. New LCSC: C14858 (Basic tier).
 
+### Done before fab submission
+
+- [x] **V4 Flex PCB FFC tail width fixed.** Bumped from 11.1 mm to 10.5 mm per the Wurth 687120183722 datasheet; the +67.6 deg horizontal-banana rotation was applied via `scripts/prep_flex_svgs.py` and re-imported into the V4 Flex Edge.Cuts layer.
+- [x] **Final BOM scan completed.** RGB LED swapped to ASMB-UTF2-0E20B (C7077610, Avago PLCC-6 RGB, 100 in stock, $0.56) replacing the original 1615 part. IMU confirmed as genuine InvenSense ICM-42688-P (C1850418, $14.19, 3358 in stock) over the cheaper but suspect TOKMAS rebrand.
+- [x] **JLCPCB order submitted 2026-06-12.** $341.84 total landed cost. "Confirm Production file" toggled ON; PCB Remark field carries explicit stiffener-side instructions (FR-4 0.2 mm on B.Cu side, 10.5 x 8 mm under the FFC contact pads per User.1 layer).
+
 ### Still open
 
-- [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`)
-- [ ] **V4 Flex PCB**: bump the FFC tail width from 11.1 mm to **10.5 mm** per the Wurth 687120183722 datasheet. This fix has not yet landed in the V4 Flex folder; do it before ordering the matching flex.
+- [ ] **Respond to JLC's production-file confirmation email** promptly when it arrives (expected within ~24 hours of order submission). Sitting on the request slips the fab slot.
+- [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`). Can be done in parallel with the fab build window.
 - [ ] **Flag haptic as experimental in firmware.** The haptic driver hardware (IRLML2060 on the haptic GPIO) ships unvalidated. Firmware should default the haptic GPIO low and only drive it behind an explicit opt-in.
-- [ ] **Final BOM scan**: open `jlcpcb/production_files/BOM-OM-FlexGrid-Rigid-PCB.csv` and confirm no surprise Extended-tier parts with thin stock slipped in. The plugin's auto-suggestions occasionally rotate inventory between sessions.
-- [ ] **Order parts for hand assembly** (need physical inventory before boards arrive):
+- [ ] **Order parts for hand assembly** (need physical inventory before boards arrive in ~2 weeks):
     - microSD socket: LCSC C428492 or Mouser equivalent (10 + spares)
     - Wurth 687120183722 FFC connector: Mouser 710-687120183722 (10 + spares)
     - All through-hole pin headers, JSTs, OLED interface as in the hand-solder list
-    - The full BOT-side SMT list (ESP32 module, mux, passives) ordered loose from LCSC
-- [ ] **Submit the JLCPCB order** with **"Confirm parts placement"** toggled ON so the assembly preview email catches any rotation surprises before they cut metal.
+    - The full BOT-side SMT list (ESP32-S3-WROOM-1-N16R8 module, CD74HC4067M mux, BOT-side passives) ordered loose from LCSC
 
 ---
 

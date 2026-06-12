@@ -539,7 +539,7 @@
       "gencad": "",
       "idf": "",
       "netlist": "",
-      "plot": "V3 Flex PCB Gerber/",
+      "plot": "FlexV4-Gerber/",
       "pos_files": "",
       "specctra_dsn": "",
       "step": "",
