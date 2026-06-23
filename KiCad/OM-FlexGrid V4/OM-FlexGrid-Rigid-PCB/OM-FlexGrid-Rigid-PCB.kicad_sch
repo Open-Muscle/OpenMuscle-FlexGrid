@@ -13609,82 +13609,6 @@
 		)
 	)
 	(symbol
-		(lib_id "power:VBUS")
-		(at 195.58 146.05 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "0ecedac6-931c-4ca1-8f25-2f137d8d9e5b")
-		(property "Reference" "#PWR018"
-			(at 195.58 149.86 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "VBUS"
-			(at 195.58 142.494 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 195.58 146.05 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 195.58 146.05 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 195.58 146.05 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "5b0c9260-4236-4420-b1d7-56da3f4fe0ec")
-		)
-		(instances
-			(project "OM-FlexGrid-Rigid-PCB"
-				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
-					(reference "#PWR018")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 109.22 22.86 90)
 		(unit 1)
@@ -14590,113 +14514,6 @@
 			(project "OM-FlexGrid-Rigid-PCB"
 				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
 					(reference "#PWR022")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Power_Protection:USBLC6-2SC6")
-		(at 195.58 153.67 180)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(uuid "288ec9ef-ae30-4648-95f6-9836c24afa87")
-		(property "Reference" "U5"
-			(at 209.55 148.844 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "USBLC6-2SC6"
-			(at 197.612 146.558 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
-			(at 194.31 147.32 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-					(italic yes)
-				)
-				(justify left)
-			)
-		)
-		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
-			(at 194.31 145.415 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
-			(at 195.58 153.67 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "LCSC" "C2687116"
-			(at 209.55 148.844 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "6"
-			(uuid "1b03fe41-c1f2-487c-9258-71fbb2b0deea")
-		)
-		(pin "1"
-			(uuid "c7a070f0-138c-461c-aed5-dbdec3ee1747")
-		)
-		(pin "3"
-			(uuid "bf907510-1b21-4458-8c65-4f07d9bacbd4")
-		)
-		(pin "2"
-			(uuid "2c822931-ccfb-412d-87b7-aaf1a9e60063")
-		)
-		(pin "4"
-			(uuid "817f7cbf-9d9d-4624-923d-05f2b625ca2b")
-		)
-		(pin "5"
-			(uuid "287d0bfe-40b1-4b25-9474-1f64b71572f6")
-		)
-		(instances
-			(project "OM-FlexGrid-Rigid-PCB"
-				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
-					(reference "U5")
 					(unit 1)
 				)
 			)
@@ -17515,83 +17332,6 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 195.58 158.75 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(in_pos_files yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5d0560d0-1476-4139-874f-b047321b9798")
-		(property "Reference" "#PWR066"
-			(at 195.58 165.1 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "GND"
-			(at 195.58 163.83 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" ""
-			(at 195.58 158.75 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" ""
-			(at 195.58 158.75 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" ""
-			(at 195.58 158.75 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "79f5b34b-aef3-4be2-91d7-0c591b2fd219")
-		)
-		(instances
-			(project "OM-FlexGrid-Rigid-PCB"
-				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
-					(reference "#PWR066")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "power:GND")
 		(at 53.34 41.91 0)
 		(unit 1)
 		(body_style 1)
@@ -19460,6 +19200,83 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 195.58 158.75 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "860ff64d-bf70-425c-aaae-416e1b7f470c")
+		(property "Reference" "#PWR066"
+			(at 195.58 165.1 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 195.58 163.83 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 195.58 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 195.58 158.75 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 195.58 158.75 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "df264767-48e4-47b8-957b-6c24ae8f570c")
+		)
+		(instances
+			(project "OM-FlexGrid-Rigid-PCB"
+				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
+					(reference "#PWR066")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 53.34 25.4 0)
 		(unit 1)
@@ -20354,6 +20171,82 @@
 			(project "OM-FlexGrid-Rigid-PCB"
 				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
 					(reference "R14")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:VBUS")
+		(at 195.58 146.05 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "9dfc8f90-7ea7-4de3-b51c-026a0cb098e5")
+		(property "Reference" "#PWR018"
+			(at 195.58 149.86 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "VBUS"
+			(at 195.58 142.494 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 195.58 146.05 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 195.58 146.05 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 195.58 146.05 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "bba5351c-7149-43e4-9aa4-68c877d8e674")
+		)
+		(instances
+			(project "OM-FlexGrid-Rigid-PCB"
+				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
+					(reference "#PWR018")
 					(unit 1)
 				)
 			)
@@ -21971,6 +21864,113 @@
 			(project "OM-FlexGrid-Rigid-PCB"
 				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
 					(reference "H4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Power_Protection:USBLC6-2SC6")
+		(at 195.58 151.13 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "bf688b7b-abf6-4583-ab29-f89a731a8e57")
+		(property "Reference" "U5"
+			(at 181.61 155.956 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "USBLC6-2SC6"
+			(at 212.852 145.796 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+			(at 196.85 157.48 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+					(italic yes)
+				)
+				(justify left)
+			)
+		)
+		(property "Datasheet" "https://www.st.com/resource/en/datasheet/usblc6-2.pdf"
+			(at 196.85 159.385 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Description" "Very low capacitance ESD protection diode, 2 data-line, SOT-23-6"
+			(at 195.58 151.13 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "LCSC" "C2687116"
+			(at 181.61 155.956 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "6"
+			(uuid "c9a2ac2c-06b2-4390-8b4d-c80e06030059")
+		)
+		(pin "1"
+			(uuid "c4c10b4b-ef0f-4298-8ae5-ab4fb7dd2ac9")
+		)
+		(pin "3"
+			(uuid "c9616f06-8d41-4ac2-906e-5df7d450c49a")
+		)
+		(pin "2"
+			(uuid "e96b9242-8f5d-49e3-9d69-96baa0763ac0")
+		)
+		(pin "4"
+			(uuid "ebcf6f22-1c2e-41d0-926f-8c028f264756")
+		)
+		(pin "5"
+			(uuid "a6e2f23d-4bed-4087-a4a9-4854f705f8d0")
+		)
+		(instances
+			(project "OM-FlexGrid-Rigid-PCB"
+				(path "/ea195db3-1512-4914-b2e6-ecba2a4e38e5"
+					(reference "U5")
 					(unit 1)
 				)
 			)
