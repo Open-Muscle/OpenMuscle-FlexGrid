@@ -2,6 +2,10 @@
 
 > **Status: BROUGHT UP 2026-06-23.** Boards arrived from JLCPCB; two units flashed with V4 MicroPython firmware and running end-to-end on the OpenMuscle discovery + subscribe protocol. Two hardware bugs surfaced during bring-up: USBLC6 ESD chip pinout reversed in the schematic (schematic fix landed; existing boards work with a 180-degree chip rotation), and the as-ordered IMU is a TOKMAS rebrand rather than genuine InvenSense as planned (driver auto-probes both variants; see [Bring-up findings](#bring-up-findings-2026-06-23) below). Total landed cost $341.84 for 10 units (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) for per-unit details).
 
+## 🎬 Build video
+
+[**Unboxing & Setup: assembling the FlexGrid V4**](https://youtu.be/2tb6GW4FNU0) walks through hand-soldering the parts JLCPCB does not populate (ESP32-S3 module, CD74HC4067 mux, ZIF/FFC connector, USB-C, buttons, RGB LED), the USBLC6 180-degree rotation fix, and first power-on with the flex sensor mated. The microSD socket and haptic parts are deferred to a future video.
+
 ## 📄 Design documents (PDFs)
 
 For people who want to review the design without opening KiCad:
