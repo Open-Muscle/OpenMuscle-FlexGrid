@@ -1,6 +1,6 @@
 # OM-FlexGrid V4
 
-> **Status: ORDERED 2026-06-12. In fab at JLCPCB.** Schematic and PCB are routed; DRC passes with zero unconnected nets. 10 units submitted for single-side SMT assembly with "Confirm Production file" toggled on. Total landed cost from JLCPCB: $341.84 (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) below for full per-unit numbers including hand-solder add-ons). Watching email for the production-file confirmation request. Not yet brought up.
+> **Status: BROUGHT UP 2026-06-23.** Boards arrived from JLCPCB; two units flashed with V4 MicroPython firmware and running end-to-end on the OpenMuscle discovery + subscribe protocol. Two hardware bugs surfaced during bring-up: USBLC6 ESD chip pinout reversed in the schematic (schematic fix landed; existing boards work with a 180-degree chip rotation), and the as-ordered IMU is a TOKMAS rebrand rather than genuine InvenSense as planned (driver auto-probes both variants; see [Bring-up findings](#bring-up-findings-2026-06-23) below). Total landed cost $341.84 for 10 units (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) for per-unit details).
 
 ## 📄 Design documents (PDFs)
 
@@ -25,6 +25,32 @@ The split between "JLCPCB assembles this" and "I hand-solder this after the boar
 - **You hand-solder everything else**: all BOT-side SMT (including U1 CD74HC4067 mux and U2 ESP32-S3 module), the microSD socket, the Wurth FFC connector, USB-C, and every through-hole pin header / JST. The per-designator table further down has each part listed by reference designator with solder-difficulty notes.
 
 Fourth major revision of the Open Muscle FlexGrid wearable sensor platform. V4 builds on the V3 production baseline (which validated the FFC interconnect and proved the 60-cell matrix as a usable ML training data source) and adds on-device storage, a status indicator, and a slimmer board profile.
+
+---
+
+## Bring-up findings (2026-06-23)
+
+Two boards from the 10-unit fab batch were flashed with V4 MicroPython firmware ([Open-Muscle/FlexGridV4-Firmware](https://github.com/Open-Muscle/FlexGridV4-Firmware), see its `BRINGUP.md` for step-by-step flashing instructions). Both ran the OpenMuscle discovery + subscribe protocol end-to-end against the PC `openmuscle web` app and the Android Connect client. Two hardware bugs surfaced during bring-up; both are documented here so future builders do not re-discover them.
+
+### 1. USBLC6-2SC6 pinout reversed in schematic (FIXED)
+
+The V4 KiCad schematic wired the USBLC6 with pin 2 on VBUS and pin 5 on GND. The actual chip pinout is the other way around (pin 2 = GND, pin 5 = VCC). With the silkscreen-correct placement, USB enumerates VBUS only (Windows reports "Device Descriptor Request Failed"), no COM port appears.
+
+- **Workaround for the existing 10-unit batch:** rotate the USBLC6 chip 180 degrees from the silkscreen orientation during placement. The SOT-23-6 footprint is symmetric so the I/O pin pairs still route correctly, and VCC and GND land where they belong.
+- **Schematic fix landed** in this repo. The next fab order will be correct without rotation.
+
+### 2. IMU is a TOKMAS rebrand, not genuine InvenSense (DRIVER WORKAROUND)
+
+The pre-fab checklist documented the IMU choice as genuine InvenSense ICM-42688-P (LCSC C1850418). The as-ordered BOM ended up with the cheaper TOKMAS rebrand (LCSC C54308212) instead. TOKMAS has the same general silicon spec but a different I2C address (0x36 / 0x37 instead of 0x68 / 0x69) and a different register map (data at 0x00-0x0D instead of 0x1F-0x2A).
+
+- **Workaround:** [`lib/imu.py`](https://github.com/Open-Muscle/FlexGridV4-Firmware/blob/main/lib/imu.py) in the V4 firmware auto-probes both variants. Verified working on board #1: live accel + gyro at the expected rates.
+- **Recommendation for the next fab order:** switch back to genuine InvenSense (C1850418) and retire the TOKMAS code path. The ~$11 per-chip savings cost a custom driver branch and ongoing maintenance.
+
+### Firmware repo and bring-up guide
+
+- Firmware: [Open-Muscle/FlexGridV4-Firmware](https://github.com/Open-Muscle/FlexGridV4-Firmware)
+- Step-by-step flashing instructions: [`BRINGUP.md`](https://github.com/Open-Muscle/FlexGridV4-Firmware/blob/main/BRINGUP.md)
+- One-shot flash script: `flash.py COM<port>` after pip-installing esptool 5.x + mpremote and downloading the MicroPython binary
 
 ---
 
@@ -265,19 +291,21 @@ What this does NOT include: the build labor (~30 minutes per board of hand-solde
 ### Done before fab submission
 
 - [x] **V4 Flex PCB FFC tail width fixed.** Bumped from 11.1 mm to 10.5 mm per the Wurth 687120183722 datasheet; the +67.6 deg horizontal-banana rotation was applied via `scripts/prep_flex_svgs.py` and re-imported into the V4 Flex Edge.Cuts layer.
-- [x] **Final BOM scan completed.** RGB LED swapped to ASMB-UTF2-0E20B (C7077610, Avago PLCC-6 RGB, 100 in stock, $0.56) replacing the original 1615 part. IMU confirmed as genuine InvenSense ICM-42688-P (C1850418, $14.19, 3358 in stock) over the cheaper but suspect TOKMAS rebrand.
+- [x] **Final BOM scan completed.** RGB LED swapped to ASMB-UTF2-0E20B (C7077610, Avago PLCC-6 RGB, 100 in stock, $0.56) replacing the original 1615 part. IMU was specified as genuine InvenSense ICM-42688-P (C1850418, $14.19, 3358 in stock); however, **the as-ordered BOM ended up with the TOKMAS rebrand (C54308212)** rather than the genuine part. Documented in [Bring-up findings](#bring-up-findings-2026-06-23). Next fab should re-select C1850418.
 - [x] **JLCPCB order submitted 2026-06-12.** $341.84 total landed cost. "Confirm Production file" toggled ON; PCB Remark field carries explicit stiffener-side instructions (FR-4 0.2 mm on B.Cu side, 10.5 x 8 mm under the FFC contact pads per User.1 layer).
+- [x] **Responded to JLC's production-file confirmation email.** Order proceeded; boards arrived 2026-06-23.
+- [x] **Parts for hand assembly ordered and received.** ESP32-S3-WROOM-1, CD74HC4067M, USB-C, Wurth FFC, microSD socket, headers all in inventory; two boards built end-to-end.
+- [x] **Boards brought up.** See [Bring-up findings](#bring-up-findings-2026-06-23). Two HW bugs surfaced (USBLC6 schematic-fixed; TOKMAS IMU driver workaround).
+- [x] **Flag haptic as experimental in firmware.** Firmware defaults `haptic_enabled` to false in `lib/settings_manager.py`; explicit opt-in only.
 
 ### Still open
 
-- [ ] **Respond to JLC's production-file confirmation email** promptly when it arrives (expected within ~24 hours of order submission). Sitting on the request slips the fab slot.
-- [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`). Can be done in parallel with the fab build window.
-- [ ] **Flag haptic as experimental in firmware.** The haptic driver hardware (IRLML2060 on the haptic GPIO) ships unvalidated. Firmware should default the haptic GPIO low and only drive it behind an explicit opt-in.
-- [ ] **Order parts for hand assembly** (need physical inventory before boards arrive in ~2 weeks):
-    - microSD socket: LCSC C428492 or Mouser equivalent (10 + spares)
-    - Wurth 687120183722 FFC connector: Mouser 710-687120183722 (10 + spares)
-    - All through-hole pin headers, JSTs, OLED interface as in the hand-solder list
-    - The full BOT-side SMT list (ESP32-S3-WROOM-1-N16R8 module, CD74HC4067M mux, BOT-side passives) ordered loose from LCSC
+- [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`). Two bring-up boards are loose; first complete wearable assembly still pending.
+- [ ] **Next-fab BOM changes** to land before the second batch:
+    - Swap TOKMAS IMU back to genuine InvenSense (C1850418).
+    - Verify the USBLC6 schematic fix produces a correct CPL on the next fab.
+    - Reconfirm RGB LED, LDO, charger LCSC parts are still in stock at the same tier.
+- [ ] **Distribute remaining boards** to collaborators (8 boards spare; Christopher gets 2+ for prosthetics socket integration work).
 
 ---
 
@@ -323,4 +351,6 @@ OM-FlexGrid V4/
 - **V3 status and bring-up findings:** `../OM-FlexGrid V3/README.md`
 - **JLCPCB plugin workflow (generic, applies to all revisions):** `../../docs/JLCPCB_WORKFLOW.md`
 - **Cross-revision comparison table:** `../REVISIONS.md`
-- **Firmware:** [Open-Muscle/FlexGridV3-Firmware](https://github.com/Open-Muscle/FlexGridV3-Firmware) (V4 will likely fork this when fabbed)
+- **V4 Firmware:** [Open-Muscle/FlexGridV4-Firmware](https://github.com/Open-Muscle/FlexGridV4-Firmware) (active; includes TOKMAS IMU support, ssd1306 driver vendored, `flash.py` one-shot bring-up, BRINGUP.md guide)
+- **V3 Firmware:** [Open-Muscle/FlexGridV3-Firmware](https://github.com/Open-Muscle/FlexGridV3-Firmware) (shipping V3 reference; V4 firmware was forked from this)
+- **Cross-device protocol spec:** [`PROTOCOL.md`](https://github.com/Open-Muscle/OpenMuscle-Hub/blob/main/PROTOCOL.md) in OpenMuscle-Hub (wire format, discovery, subscribe semantics, multi-device data model)
