@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use or build on this hardware, please cite the OpenMuscle technical report below (DOI pending)."
+type: software
+title: "OpenMuscle-FlexGrid"
+abstract: >-
+  Open hardware for the OpenMuscle FlexGrid, a 60-cell (15x4) forearm pressure
+  sensing band built on flex-rigid PCBs with an ESP32-S3. KiCad sources,
+  Gerbers, BOMs, and design PDFs for every revision; V4 is the current
+  validated revision.
+authors:
+  - family-names: Moghadam
+    given-names: Tory
+    orcid: "https://orcid.org/0009-0001-8126-247X"
+    affiliation: OpenMuscle
+repository-code: "https://github.com/Open-Muscle/OpenMuscle-FlexGrid"
+url: "https://openmuscle.org"
+license: CERN-OHL-S-2.0
+keywords:
+  - force myography
+  - FMG
+  - pressure sensor matrix
+  - wearable sensing
+  - open hardware
+  - KiCad
+preferred-citation:
+  type: report
+  title: "OpenMuscle: Forearm Force-Myography with VR Hand-Tracking Ground Truth: Dataset and Honest Baselines"
+  authors:
+    - family-names: Moghadam
+      given-names: Tory
+      orcid: "https://orcid.org/0009-0001-8126-247X"
+      affiliation: OpenMuscle
+  institution:
+    name: OpenMuscle
+  version: "0.2"
+  year: 2026
+  month: 11
+  url: "https://openmuscle.org/research"
+  notes: "DOI pending"
