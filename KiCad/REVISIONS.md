@@ -4,27 +4,30 @@ Quick cross-version comparison for anyone walking up to the repo cold. For per-r
 
 | Revision | Status | Year | Headline change | Detail |
 |---|---|---|---|---|
-| **V4** | In design (paper) | 2026 | microSD + RGB status LED + slimmer reorientation | [`OM-FlexGrid V4/README.md`](OM-FlexGrid%20V4/README.md) |
-| **V3** | Production-quality matrix (validated) | 2026 | Wurth FFC interconnect; matrix usable as ML training source | [`OM-FlexGrid V3/README.md`](OM-FlexGrid%20V3/README.md) |
+| **V4** | Current, validated (fabbed 2026-06, in starter kits since 2026-10; design files at V4-2) | 2026 | microSD + RGB status LED + slimmer reorientation; V4-2 adds USB presence sensing | [`OM-FlexGrid V4/README.md`](OM-FlexGrid%20V4/README.md) |
+| **V3** | Previous, validated | 2026 | Wurth FFC interconnect; matrix usable as ML training source | [`OM-FlexGrid V3/README.md`](OM-FlexGrid%20V3/README.md) |
 | **V2** | Deprecated | 2025 | Pre-FFC, used hand-soldered pin headers between flex and rigid | [`OM-FlexGrid V2/README.md`](OM-FlexGrid%20V2/README.md) |
 | **V1** | Archived | 2025 | Early prototype | [`OM-FlexGrid V1/`](OM-FlexGrid%20V1/) |
 | **V0** | Archived | 2024 | Initial proof-of-concept | [`OM-FlexGrid V0/`](OM-FlexGrid%20V0/) |
 
 ---
 
-## V4 (in design, 2026)
+## V4 (current, 2026)
 
-**Headline:** Wearable-ready upgrade. On-device data logging via microSD, glance-tells via RGB status LED, slimmer board geometry for a bracelet fit. Builds on the V3 production baseline; not yet fabbed.
+**Headline:** Wearable-ready upgrade. On-device data logging via microSD, glance-tells via RGB status LED, slimmer board geometry for a bracelet fit. Builds on the V3 production baseline. Fabricated June 2026 (10 units, JLCPCB single-side SMT), brought up 2026-06-23, validated in use; two bands shipped as the first OpenMuscle starter kit in October 2026 running FlexGridV4-Firmware v4.0.1. Design files are at revision V4-2 (2026-11-03), not yet fabricated.
 
 **Key adds vs V3:**
 - microSD card socket (Molex 5033981892, LCSC C428492) wired in SPI mode
 - Discrete common-cathode 0603 RGB LED on GPIO 40/41/42 (zero quiescent, no setup fee)
 - Board re-rotated so the long axis runs along the forearm, lower-profile against the skin
 - Footprint cleanup: 1N5819 and 1N4007 standardized on SOD-123 (was SOD-123F), resistors forced to 0603
+- V4-2 (design files only): VBUS sense divider on IO39 so firmware can detect USB, vias moved out of SMD pads, USB D+/D- routed as a pair
 
-**Open items before fab:** final LDO part pick, IMU LCSC choice (POP must be green), V4 Flex tail width fix (11.1 to 10.5 mm per Wurth datasheet), full BOM tier review.
+**Found in bring-up:** USBLC6 pinout reversed in the schematic (fixed; June boards need the chip rotated 180 degrees), IMU shipped as the TOKMAS rebrand (firmware auto-probes both). **Open before the next fab:** final VBUS-STAT divider values, regenerate BOM/CPL/Gerbers for V4-2, swap the IMU back to genuine InvenSense.
 
-**Hand-soldered after JLC assembly:** microSD socket, Wurth FFC connector, battery JST, pin headers.
+**Hand-soldered after JLC assembly:** all bottom-side SMT (ESP32-S3 module, CD74HC4067 mux, a few passives), microSD socket, Wurth FFC connector, USB-C, battery JST, pin headers.
+
+**Firmware:** [Open-Muscle/FlexGridV4-Firmware](https://github.com/Open-Muscle/FlexGridV4-Firmware) v4.0.1.
 
 [Full V4 README](OM-FlexGrid%20V4/README.md)
 

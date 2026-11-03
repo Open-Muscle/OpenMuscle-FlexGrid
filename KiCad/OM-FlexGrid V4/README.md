@@ -1,6 +1,8 @@
 # OM-FlexGrid V4
 
-> **Status: BROUGHT UP 2026-06-23.** Boards arrived from JLCPCB; two units flashed with V4 MicroPython firmware and running end-to-end on the OpenMuscle discovery + subscribe protocol. Two hardware bugs surfaced during bring-up: USBLC6 ESD chip pinout reversed in the schematic (schematic fix landed; existing boards work with a 180-degree chip rotation), and the as-ordered IMU is a TOKMAS rebrand rather than genuine InvenSense as planned (driver auto-probes both variants; see [Bring-up findings](#bring-up-findings-2026-06-23) below). Total landed cost $341.84 for 10 units (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) for per-unit details).
+> **Status: VALIDATED, CURRENT REVISION.** Brought up 2026-06-23 from the 10-unit JLCPCB batch and in use since. Two bands were assembled, flashed with [FlexGridV4-Firmware](https://github.com/Open-Muscle/FlexGridV4-Firmware) v4.0.1 and shipped as the first OpenMuscle starter kit in October 2026. V4 is the best-performing FlexGrid revision to date. Two hardware bugs surfaced during bring-up: USBLC6 ESD chip pinout reversed in the schematic (fixed in the schematic; the June boards work with a 180-degree chip rotation), and the as-ordered IMU is a TOKMAS rebrand rather than genuine InvenSense as planned (driver auto-probes both variants; see [Bring-up findings](#bring-up-findings-2026-06-23) below). Total landed cost $341.84 for 10 units (~$35 per board for the JLC half; see [Cost breakdown](#cost-breakdown-10-unit-batch-june-2026) for per-unit details).
+>
+> **Design files are at revision V4-2 (2026-11-03).** V4-2 adds USB presence sensing, moves the vias out of the SMD pads and re-routes the USB data lines as a pair; see [Revision V4-2](#revision-v4-2-2026-11-03). V4-2 has not been fabricated. The BOM, CPL and Gerber files under `jlcpcb/` and `production/` are still the June 2026 as-ordered V4 set and must be regenerated before the next order.
 
 ## 🎬 Build video
 
@@ -58,6 +60,34 @@ The pre-fab checklist documented the IMU choice as genuine InvenSense ICM-42688-
 
 ---
 
+## Revision V4-2 (2026-11-03)
+
+Schematic and layout changes made after the first production run. These live in the KiCad files only: nothing at V4-2 has been fabricated, and the `jlcpcb/` and `production/` outputs are still the June 2026 as-ordered set. Rev field in the schematic title block: `V4-2`.
+
+### USB presence sensing (new)
+
+The June boards cannot tell whether USB is plugged in. The MAX16054 latch keeps the board powered while VBUS is present, so the power button appears to do nothing on USB and the firmware has no way to know why (see the [band reference](https://github.com/Open-Muscle/FlexGridV4-Firmware/blob/main/docs/device-reference.md) in the firmware repo). V4-2 adds a VBUS divider the ESP32-S3 can read.
+
+| Designator | Value | Footprint | Between | Role |
+|---|---|---|---|---|
+| R19 | 10k | 0603 | VBUS and `VBUS-STAT` | high side of the VBUS sense divider |
+| R20 | 100k | 0603 | `VBUS-STAT` and GND | low side of the divider |
+| R21 | 100k | 0603 | `PWR_OFF` and GND | pull-down on the Q3 gate (IO45) so the power-off MOSFET stays off while the ESP32 boots |
+
+`VBUS-STAT` lands on U2 pin 32 (IO39). **Value check still open:** as drawn, 10k over 100k puts about 4.5 V on IO39 with 5 V on VBUS, above the ESP32-S3 GPIO limit. Pick values that keep the node under 3.3 V (for example 100k over 100k for 2.5 V) before the next fab. Firmware support for reading the pin is not written yet.
+
+The charger PROG note on the schematic was also corrected: R4 is 2k on the STC4054 PROG pin, which sets the charge current to 500 mA (the old note suggesting 2.7k was stale).
+
+### Vias moved out of the pads ([#3](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/issues/3))
+
+The June layout had 29 vias sitting inside SMD pads (ESP32 module pads, mux, LDO, charger, buttons, microSD socket, several resistors). An unplugged via inside a pad wicks solder away from the joint during reflow. V4-2 moves them next to their pads instead. One remains, on Q3 pad 2 (GND, source of the power-off MOSFET), where the via annulus still overlaps the pad edge.
+
+### USB data lines routed as a pair ([#4](https://github.com/Open-Muscle/OpenMuscle-FlexGrid/issues/4))
+
+The June layout ran D+ and D- between the USBLC6 and the ESP32 module as two unrelated traces, 15.6 mm and 34.5 mm long. V4-2 routes them together: 16.4 mm and 19.6 mm, 0.2 mm wide, 0.25 mm edge gap where they run side by side, one layer change each; the connector-to-ESD segments are 7.6 mm and 7.3 mm. The pair uses the default net class geometry and has not been checked against the JLCPCB 4-layer stack-up for 90 ohm differential impedance. The ESP32-S3 is a USB full-speed device (12 Mbit/s), so over this length the change is about tidiness and skew rather than a hard signal-integrity requirement.
+
+---
+
 ## What is new in V4 vs V3
 
 | Area | V3 | V4 | Why |
@@ -69,7 +99,7 @@ The pre-fab checklist documented the IMU choice as genuine InvenSense ICM-42688-
 | **Diode footprints** | Mixed (D-SOD-123F seen on 1N5819 and 1N4007) | **Standardized on SOD-123** (1N4007W style) | Matches what LCSC actually stocks; avoids the V3 mid-design footprint mismatch we hit |
 | **Resistor packages** | Mixed 0402 / 0603 | **All 0603** | Easier hand rework, broader LCSC stock, more forgiving for the prototype-quantity user |
 
-What stays the same as V3: 60-sensor 15x4 Velostat matrix on the flex PCB, ESP32-S3-WROOM-1-N16R8 controller, CD74HC4067 mux, Wurth 687120183722 FFC interconnect, MAX16054 soft power, LTC4054-class charger, TPS7A03 LDO family (specific part TBD this revision), USB-C power and data, BAT54C diode-OR for VBUS-or-VBAT, ICM-42688-P IMU (genuine TDK or pin-compatible part, awaiting final LCSC stock decision).
+What stays the same as V3: 60-sensor 15x4 Velostat matrix on the flex PCB, ESP32-S3-WROOM-1-N16R8 controller, CD74HC4067 mux, Wurth 687120183722 FFC interconnect, MAX16054 soft power, STC4054GR charger (LTC4054 pin-compatible), TPS7A0333 LDO, USB-C power and data, BAT54C diode-OR for VBUS-or-VBAT, ICM-42688-P class IMU (the June batch shipped with the TOKMAS rebrand; see bring-up findings).
 
 ---
 
@@ -304,12 +334,16 @@ What this does NOT include: the build labor (~30 minutes per board of hand-solde
 
 ### Still open
 
-- [ ] **Mechanical / 3D fit check** against the bracelet enclosure (3D STEP at `OM-FlexGrid-Rigid-PCB.step`). Two bring-up boards are loose; first complete wearable assembly still pending.
+- [x] **Complete wearables assembled** on the cloth bracelet with battery and flex sensor; two shipped as the first starter kit (2026-10). 3D STEP at `OM-FlexGrid-Rigid-PCB.step`.
 - [ ] **Next-fab BOM changes** to land before the second batch:
     - Swap TOKMAS IMU back to genuine InvenSense (C1850418).
     - Verify the USBLC6 schematic fix produces a correct CPL on the next fab.
     - Reconfirm RGB LED, LDO, charger LCSC parts are still in stock at the same tier.
-- [ ] **Distribute remaining boards** to collaborators (8 boards spare; Christopher gets 2+ for prosthetics socket integration work).
+    - Add R19, R20, R21 (V4-2 USB presence sensing and PWR_OFF pull-down) with final divider values.
+- [ ] **Fix the VBUS-STAT divider values** so IO39 stays under 3.3 V (see [Revision V4-2](#revision-v4-2-2026-11-03)), and move the last via out of Q3 pad 2.
+- [ ] **Regenerate production files for V4-2.** BOM, CPL and Gerbers under `jlcpcb/` and `production/` still describe the June 2026 board.
+- [ ] **DRC pass before fab.** kicad-cli on V4-2 reports 0 unconnected items, 19 clearance violations (all inside the 0.5 mm pitch USB-C and IMU pin fields, 16 of them already present on the fabbed board), 2 courtyard overlaps (R2 with J4, J5 with R11) and 1 dangling via on ROW_3.
+- [x] **First starter kit shipped (2026-10):** two assembled bands with firmware v4.0.1 to an outside collaborator. Remaining boards are reserved for further kits.
 
 ---
 
@@ -339,7 +373,7 @@ OM-FlexGrid V4/
     |-- OM-FlexGrid-Rigid-V4-Gerber/         Standalone Gerber export
     |-- OM-FlexGrid-Rigid-V4-Gerber.zip      Standalone Gerber zip
     |-- OmFlexGridArtV4.svg                  Front silkscreen artwork
-    |-- jlcpcb/                              JLCPCB plugin output (use these for ordering)
+    |-- jlcpcb/                              JLCPCB plugin output from the June 2026 order (regenerate for V4-2)
     |   |-- gerber/
     |   `-- production_files/
     |       |-- GERBER-OM-FlexGrid-Rigid-PCB.zip
